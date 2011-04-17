@@ -38,6 +38,10 @@
 		C6DA2002135A5D8C00572D3E /* Integer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1FFE135A5D8C00572D3E /* Integer.cpp */; };
 		C6DA2005135A5D9F00572D3E /* ContextSimbols.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA2003135A5D9F00572D3E /* ContextSimbols.cpp */; };
 		C6DA2008135AA03B00572D3E /* codegenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA2006135AA03A00572D3E /* codegenerator.cpp */; };
+		C6F84E28135B0C2200987FA3 /* symbol.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F84E26135B0C2200987FA3 /* symbol.cpp */; };
+		C6F84E2B135B0C3E00987FA3 /* terminal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F84E29135B0C3E00987FA3 /* terminal.cpp */; };
+		C6F84E2E135B0C4800987FA3 /* nonterminal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F84E2C135B0C4800987FA3 /* nonterminal.cpp */; };
+		C6F84E31135B0C6300987FA3 /* production.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6F84E2F135B0C6300987FA3 /* production.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -118,6 +122,14 @@
 		C6DA2006135AA03A00572D3E /* codegenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = codegenerator.cpp; sourceTree = "<group>"; };
 		C6DA2007135AA03A00572D3E /* codegenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = codegenerator.h; sourceTree = "<group>"; };
 		C6F84E24135B0A4F00987FA3 /* testcode.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testcode.txt; sourceTree = "<group>"; };
+		C6F84E26135B0C2200987FA3 /* symbol.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = symbol.cpp; sourceTree = "<group>"; };
+		C6F84E27135B0C2200987FA3 /* symbol.h */ = {isa = PBXFileReference; fileEncoding = 4; path = symbol.h; sourceTree = "<group>"; };
+		C6F84E29135B0C3E00987FA3 /* terminal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = terminal.cpp; sourceTree = "<group>"; };
+		C6F84E2A135B0C3E00987FA3 /* terminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = terminal.h; sourceTree = "<group>"; };
+		C6F84E2C135B0C4800987FA3 /* nonterminal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = nonterminal.cpp; sourceTree = "<group>"; };
+		C6F84E2D135B0C4800987FA3 /* nonterminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = nonterminal.h; sourceTree = "<group>"; };
+		C6F84E2F135B0C6300987FA3 /* production.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = production.cpp; sourceTree = "<group>"; };
+		C6F84E30135B0C6300987FA3 /* production.h */ = {isa = PBXFileReference; fileEncoding = 4; path = production.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -182,6 +194,14 @@
 				C6DA1FD5135A4DC100572D3E /* compilerexception.h */,
 				C6DA2006135AA03A00572D3E /* codegenerator.cpp */,
 				C6DA2007135AA03A00572D3E /* codegenerator.h */,
+				C6F84E26135B0C2200987FA3 /* symbol.cpp */,
+				C6F84E27135B0C2200987FA3 /* symbol.h */,
+				C6F84E29135B0C3E00987FA3 /* terminal.cpp */,
+				C6F84E2A135B0C3E00987FA3 /* terminal.h */,
+				C6F84E2C135B0C4800987FA3 /* nonterminal.cpp */,
+				C6F84E2D135B0C4800987FA3 /* nonterminal.h */,
+				C6F84E2F135B0C6300987FA3 /* production.cpp */,
+				C6F84E30135B0C6300987FA3 /* production.h */,
 			);
 			path = compiler;
 			sourceTree = "<group>";
@@ -307,6 +327,10 @@
 				C631D762135ADB6C00FC0C06 /* TokenJavaCode.cpp in Sources */,
 				C631D766135AEA6F00FC0C06 /* TokenDeclaration.cpp in Sources */,
 				C631D769135AED1900FC0C06 /* TokenEof.cpp in Sources */,
+				C6F84E28135B0C2200987FA3 /* symbol.cpp in Sources */,
+				C6F84E2B135B0C3E00987FA3 /* terminal.cpp in Sources */,
+				C6F84E2E135B0C4800987FA3 /* nonterminal.cpp in Sources */,
+				C6F84E31135B0C6300987FA3 /* production.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

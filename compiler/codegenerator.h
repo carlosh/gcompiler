@@ -7,6 +7,8 @@
 //
 
 #include "LexAnalyzer.h"
+#include "production.h"
+#include <vector>
 
 class codegenerator
 {
@@ -14,6 +16,7 @@ class codegenerator
 private:
     
     LexAnalyzer* lex;
+    vector<production*> gramatica;
     
 public:
 
