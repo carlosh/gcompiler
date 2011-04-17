@@ -7,7 +7,37 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C631D73B135AD5F700FC0C06 /* TokenTagOpen.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C631D739135AD5F700FC0C06 /* TokenTagOpen.cpp */; };
+		C631D73E135AD60100FC0C06 /* TokenTagClose.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C631D73C135AD60100FC0C06 /* TokenTagClose.cpp */; };
+		C631D741135AD61100FC0C06 /* TokenTerminal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C631D73F135AD61100FC0C06 /* TokenTerminal.cpp */; };
+		C631D747135AD64D00FC0C06 /* TokenParserCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C631D745135AD64D00FC0C06 /* TokenParserCode.cpp */; };
+		C631D74A135AD66600FC0C06 /* TokenNonTerminal.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C631D748135AD66600FC0C06 /* TokenNonTerminal.cpp */; };
+		C631D74D135AD67B00FC0C06 /* TokenClass.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C631D74B135AD67B00FC0C06 /* TokenClass.cpp */; };
+		C631D750135AD6B900FC0C06 /* TokenComma.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C631D74E135AD6B900FC0C06 /* TokenComma.cpp */; };
+		C631D753135AD9ED00FC0C06 /* TokenID.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C631D751135AD9EC00FC0C06 /* TokenID.cpp */; };
+		C631D756135ADA0700FC0C06 /* TokenProduction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C631D754135ADA0700FC0C06 /* TokenProduction.cpp */; };
+		C631D759135ADA1C00FC0C06 /* TokenPipe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C631D757135ADA1C00FC0C06 /* TokenPipe.cpp */; };
+		C631D762135ADB6C00FC0C06 /* TokenJavaCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C631D760135ADB6B00FC0C06 /* TokenJavaCode.cpp */; };
+		C631D766135AEA6F00FC0C06 /* TokenDeclaration.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C631D764135AEA6E00FC0C06 /* TokenDeclaration.cpp */; };
+		C631D769135AED1900FC0C06 /* TokenEof.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C631D767135AED1700FC0C06 /* TokenEof.cpp */; };
 		C6DA1ED1135A36BC00572D3E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1ED0135A36BC00572D3E /* main.cpp */; };
+		C6DA1EDA135A417C00572D3E /* LexAnalyzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1ED8135A417C00572D3E /* LexAnalyzer.cpp */; };
+		C6DA1EDD135A41AC00572D3E /* stdafx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1EDB135A41AC00572D3E /* stdafx.cpp */; };
+		C6DA1F83135A423100572D3E /* Token.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1EE0135A423000572D3E /* Token.cpp */; };
+		C6DA1F84135A423100572D3E /* TokenImport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1EE2135A423000572D3E /* TokenImport.cpp */; };
+		C6DA1FC0135A423100572D3E /* TokenSemicolon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1F5B135A423100572D3E /* TokenSemicolon.cpp */; };
+		C6DA1FD6135A4DC100572D3E /* compilerexception.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1FD4135A4DC100572D3E /* compilerexception.cpp */; };
+		C6DA1FE9135A5C9500572D3E /* Statement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1FE7135A5C9500572D3E /* Statement.cpp */; };
+		C6DA1FED135A5CBD00572D3E /* FunctionCode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1FEB135A5CBD00572D3E /* FunctionCode.cpp */; };
+		C6DA1FF0135A5CE900572D3E /* SemanticInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1FEE135A5CE900572D3E /* SemanticInfo.cpp */; };
+		C6DA1FF3135A5D4500572D3E /* Tipo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1FF1135A5D4500572D3E /* Tipo.cpp */; };
+		C6DA1FF8135A5D5E00572D3E /* Cadena.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1FF4135A5D5E00572D3E /* Cadena.cpp */; };
+		C6DA1FF9135A5D5E00572D3E /* Caracter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1FF6135A5D5E00572D3E /* Caracter.cpp */; };
+		C6DA2000135A5D8C00572D3E /* Booleano.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1FFA135A5D8C00572D3E /* Booleano.cpp */; };
+		C6DA2001135A5D8C00572D3E /* Flotante.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1FFC135A5D8C00572D3E /* Flotante.cpp */; };
+		C6DA2002135A5D8C00572D3E /* Integer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1FFE135A5D8C00572D3E /* Integer.cpp */; };
+		C6DA2005135A5D9F00572D3E /* ContextSimbols.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA2003135A5D9F00572D3E /* ContextSimbols.cpp */; };
+		C6DA2008135AA03B00572D3E /* codegenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA2006135AA03A00572D3E /* codegenerator.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -23,9 +53,71 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		C631D739135AD5F700FC0C06 /* TokenTagOpen.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TokenTagOpen.cpp; sourceTree = "<group>"; };
+		C631D73A135AD5F700FC0C06 /* TokenTagOpen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenTagOpen.h; sourceTree = "<group>"; };
+		C631D73C135AD60100FC0C06 /* TokenTagClose.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TokenTagClose.cpp; sourceTree = "<group>"; };
+		C631D73D135AD60100FC0C06 /* TokenTagClose.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenTagClose.h; sourceTree = "<group>"; };
+		C631D73F135AD61100FC0C06 /* TokenTerminal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TokenTerminal.cpp; sourceTree = "<group>"; };
+		C631D740135AD61100FC0C06 /* TokenTerminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenTerminal.h; sourceTree = "<group>"; };
+		C631D745135AD64D00FC0C06 /* TokenParserCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TokenParserCode.cpp; sourceTree = "<group>"; };
+		C631D746135AD64D00FC0C06 /* TokenParserCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenParserCode.h; sourceTree = "<group>"; };
+		C631D748135AD66600FC0C06 /* TokenNonTerminal.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TokenNonTerminal.cpp; sourceTree = "<group>"; };
+		C631D749135AD66600FC0C06 /* TokenNonTerminal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenNonTerminal.h; sourceTree = "<group>"; };
+		C631D74B135AD67B00FC0C06 /* TokenClass.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TokenClass.cpp; sourceTree = "<group>"; };
+		C631D74C135AD67B00FC0C06 /* TokenClass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenClass.h; sourceTree = "<group>"; };
+		C631D74E135AD6B900FC0C06 /* TokenComma.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TokenComma.cpp; sourceTree = "<group>"; };
+		C631D74F135AD6B900FC0C06 /* TokenComma.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenComma.h; sourceTree = "<group>"; };
+		C631D751135AD9EC00FC0C06 /* TokenID.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TokenID.cpp; sourceTree = "<group>"; };
+		C631D752135AD9EC00FC0C06 /* TokenID.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenID.h; sourceTree = "<group>"; };
+		C631D754135ADA0700FC0C06 /* TokenProduction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TokenProduction.cpp; sourceTree = "<group>"; };
+		C631D755135ADA0700FC0C06 /* TokenProduction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenProduction.h; sourceTree = "<group>"; };
+		C631D757135ADA1C00FC0C06 /* TokenPipe.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TokenPipe.cpp; sourceTree = "<group>"; };
+		C631D758135ADA1C00FC0C06 /* TokenPipe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenPipe.h; sourceTree = "<group>"; };
+		C631D760135ADB6B00FC0C06 /* TokenJavaCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TokenJavaCode.cpp; sourceTree = "<group>"; };
+		C631D761135ADB6C00FC0C06 /* TokenJavaCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenJavaCode.h; sourceTree = "<group>"; };
+		C631D763135ADD1500FC0C06 /* TokenInclude.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenInclude.h; sourceTree = "<group>"; };
+		C631D764135AEA6E00FC0C06 /* TokenDeclaration.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TokenDeclaration.cpp; sourceTree = "<group>"; };
+		C631D765135AEA6E00FC0C06 /* TokenDeclaration.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenDeclaration.h; sourceTree = "<group>"; };
+		C631D767135AED1700FC0C06 /* TokenEof.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TokenEof.cpp; sourceTree = "<group>"; };
+		C631D768135AED1800FC0C06 /* TokenEof.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenEof.h; sourceTree = "<group>"; };
 		C6DA1ECC135A36BC00572D3E /* compiler */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = compiler; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6DA1ED0135A36BC00572D3E /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		C6DA1ED2135A36BC00572D3E /* compiler.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = compiler.1; sourceTree = "<group>"; };
+		C6DA1ED8135A417C00572D3E /* LexAnalyzer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LexAnalyzer.cpp; sourceTree = "<group>"; };
+		C6DA1ED9135A417C00572D3E /* LexAnalyzer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LexAnalyzer.h; sourceTree = "<group>"; };
+		C6DA1EDB135A41AC00572D3E /* stdafx.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = stdafx.cpp; sourceTree = "<group>"; };
+		C6DA1EDC135A41AC00572D3E /* stdafx.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = stdafx.h; sourceTree = "<group>"; };
+		C6DA1EE0135A423000572D3E /* Token.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Token.cpp; sourceTree = "<group>"; };
+		C6DA1EE1135A423000572D3E /* Token.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Token.h; sourceTree = "<group>"; };
+		C6DA1EE2135A423000572D3E /* TokenImport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TokenImport.cpp; sourceTree = "<group>"; };
+		C6DA1EE3135A423000572D3E /* TokenImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenImport.h; sourceTree = "<group>"; };
+		C6DA1F5B135A423100572D3E /* TokenSemicolon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TokenSemicolon.cpp; sourceTree = "<group>"; };
+		C6DA1F5C135A423100572D3E /* TokenSemicolon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenSemicolon.h; sourceTree = "<group>"; };
+		C6DA1FD4135A4DC100572D3E /* compilerexception.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = compilerexception.cpp; sourceTree = "<group>"; };
+		C6DA1FD5135A4DC100572D3E /* compilerexception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = compilerexception.h; sourceTree = "<group>"; };
+		C6DA1FE7135A5C9500572D3E /* Statement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Statement.cpp; sourceTree = "<group>"; };
+		C6DA1FE8135A5C9500572D3E /* Statement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Statement.h; sourceTree = "<group>"; };
+		C6DA1FEB135A5CBD00572D3E /* FunctionCode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FunctionCode.cpp; sourceTree = "<group>"; };
+		C6DA1FEC135A5CBD00572D3E /* FunctionCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FunctionCode.h; sourceTree = "<group>"; };
+		C6DA1FEE135A5CE900572D3E /* SemanticInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SemanticInfo.cpp; sourceTree = "<group>"; };
+		C6DA1FEF135A5CE900572D3E /* SemanticInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SemanticInfo.h; sourceTree = "<group>"; };
+		C6DA1FF1135A5D4500572D3E /* Tipo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Tipo.cpp; sourceTree = "<group>"; };
+		C6DA1FF2135A5D4500572D3E /* Tipo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tipo.h; sourceTree = "<group>"; };
+		C6DA1FF4135A5D5E00572D3E /* Cadena.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Cadena.cpp; sourceTree = "<group>"; };
+		C6DA1FF5135A5D5E00572D3E /* Cadena.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Cadena.h; sourceTree = "<group>"; };
+		C6DA1FF6135A5D5E00572D3E /* Caracter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Caracter.cpp; sourceTree = "<group>"; };
+		C6DA1FF7135A5D5E00572D3E /* Caracter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Caracter.h; sourceTree = "<group>"; };
+		C6DA1FFA135A5D8C00572D3E /* Booleano.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Booleano.cpp; sourceTree = "<group>"; };
+		C6DA1FFB135A5D8C00572D3E /* Booleano.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Booleano.h; sourceTree = "<group>"; };
+		C6DA1FFC135A5D8C00572D3E /* Flotante.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Flotante.cpp; sourceTree = "<group>"; };
+		C6DA1FFD135A5D8C00572D3E /* Flotante.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flotante.h; sourceTree = "<group>"; };
+		C6DA1FFE135A5D8C00572D3E /* Integer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Integer.cpp; sourceTree = "<group>"; };
+		C6DA1FFF135A5D8C00572D3E /* Integer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Integer.h; sourceTree = "<group>"; };
+		C6DA2003135A5D9F00572D3E /* ContextSimbols.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ContextSimbols.cpp; sourceTree = "<group>"; };
+		C6DA2004135A5D9F00572D3E /* ContextSimbols.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContextSimbols.h; sourceTree = "<group>"; };
+		C6DA2006135AA03A00572D3E /* codegenerator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = codegenerator.cpp; sourceTree = "<group>"; };
+		C6DA2007135AA03A00572D3E /* codegenerator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = codegenerator.h; sourceTree = "<group>"; };
+		C6F84E24135B0A4F00987FA3 /* testcode.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = testcode.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,10 +150,80 @@
 		C6DA1ECF135A36BC00572D3E /* compiler */ = {
 			isa = PBXGroup;
 			children = (
+				C6F84E24135B0A4F00987FA3 /* testcode.txt */,
+				C6DA1EDF135A420700572D3E /* Tokens */,
+				C6DA2003135A5D9F00572D3E /* ContextSimbols.cpp */,
+				C6DA2004135A5D9F00572D3E /* ContextSimbols.h */,
+				C6DA1FFA135A5D8C00572D3E /* Booleano.cpp */,
+				C6DA1FFB135A5D8C00572D3E /* Booleano.h */,
+				C6DA1FFC135A5D8C00572D3E /* Flotante.cpp */,
+				C6DA1FFD135A5D8C00572D3E /* Flotante.h */,
+				C6DA1FFE135A5D8C00572D3E /* Integer.cpp */,
+				C6DA1FFF135A5D8C00572D3E /* Integer.h */,
+				C6DA1FF4135A5D5E00572D3E /* Cadena.cpp */,
+				C6DA1FF5135A5D5E00572D3E /* Cadena.h */,
+				C6DA1FF6135A5D5E00572D3E /* Caracter.cpp */,
+				C6DA1FF7135A5D5E00572D3E /* Caracter.h */,
+				C6DA1FF1135A5D4500572D3E /* Tipo.cpp */,
+				C6DA1FF2135A5D4500572D3E /* Tipo.h */,
+				C6DA1FEE135A5CE900572D3E /* SemanticInfo.cpp */,
+				C6DA1FEF135A5CE900572D3E /* SemanticInfo.h */,
+				C6DA1FEB135A5CBD00572D3E /* FunctionCode.cpp */,
+				C6DA1FEC135A5CBD00572D3E /* FunctionCode.h */,
+				C6DA1FE7135A5C9500572D3E /* Statement.cpp */,
+				C6DA1FE8135A5C9500572D3E /* Statement.h */,
+				C6DA1EDB135A41AC00572D3E /* stdafx.cpp */,
+				C6DA1EDC135A41AC00572D3E /* stdafx.h */,
+				C6DA1ED8135A417C00572D3E /* LexAnalyzer.cpp */,
+				C6DA1ED9135A417C00572D3E /* LexAnalyzer.h */,
 				C6DA1ED0135A36BC00572D3E /* main.cpp */,
 				C6DA1ED2135A36BC00572D3E /* compiler.1 */,
+				C6DA1FD4135A4DC100572D3E /* compilerexception.cpp */,
+				C6DA1FD5135A4DC100572D3E /* compilerexception.h */,
+				C6DA2006135AA03A00572D3E /* codegenerator.cpp */,
+				C6DA2007135AA03A00572D3E /* codegenerator.h */,
 			);
 			path = compiler;
+			sourceTree = "<group>";
+		};
+		C6DA1EDF135A420700572D3E /* Tokens */ = {
+			isa = PBXGroup;
+			children = (
+				C6DA1EE0135A423000572D3E /* Token.cpp */,
+				C6DA1EE1135A423000572D3E /* Token.h */,
+				C6DA1EE2135A423000572D3E /* TokenImport.cpp */,
+				C6DA1EE3135A423000572D3E /* TokenImport.h */,
+				C6DA1F5B135A423100572D3E /* TokenSemicolon.cpp */,
+				C6DA1F5C135A423100572D3E /* TokenSemicolon.h */,
+				C631D739135AD5F700FC0C06 /* TokenTagOpen.cpp */,
+				C631D73A135AD5F700FC0C06 /* TokenTagOpen.h */,
+				C631D73C135AD60100FC0C06 /* TokenTagClose.cpp */,
+				C631D73D135AD60100FC0C06 /* TokenTagClose.h */,
+				C631D73F135AD61100FC0C06 /* TokenTerminal.cpp */,
+				C631D740135AD61100FC0C06 /* TokenTerminal.h */,
+				C631D745135AD64D00FC0C06 /* TokenParserCode.cpp */,
+				C631D746135AD64D00FC0C06 /* TokenParserCode.h */,
+				C631D748135AD66600FC0C06 /* TokenNonTerminal.cpp */,
+				C631D749135AD66600FC0C06 /* TokenNonTerminal.h */,
+				C631D74B135AD67B00FC0C06 /* TokenClass.cpp */,
+				C631D74C135AD67B00FC0C06 /* TokenClass.h */,
+				C631D74E135AD6B900FC0C06 /* TokenComma.cpp */,
+				C631D74F135AD6B900FC0C06 /* TokenComma.h */,
+				C631D751135AD9EC00FC0C06 /* TokenID.cpp */,
+				C631D752135AD9EC00FC0C06 /* TokenID.h */,
+				C631D754135ADA0700FC0C06 /* TokenProduction.cpp */,
+				C631D755135ADA0700FC0C06 /* TokenProduction.h */,
+				C631D757135ADA1C00FC0C06 /* TokenPipe.cpp */,
+				C631D758135ADA1C00FC0C06 /* TokenPipe.h */,
+				C631D760135ADB6B00FC0C06 /* TokenJavaCode.cpp */,
+				C631D761135ADB6C00FC0C06 /* TokenJavaCode.h */,
+				C631D763135ADD1500FC0C06 /* TokenInclude.h */,
+				C631D764135AEA6E00FC0C06 /* TokenDeclaration.cpp */,
+				C631D765135AEA6E00FC0C06 /* TokenDeclaration.h */,
+				C631D767135AED1700FC0C06 /* TokenEof.cpp */,
+				C631D768135AED1800FC0C06 /* TokenEof.h */,
+			);
+			name = Tokens;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -115,6 +277,36 @@
 			buildActionMask = 2147483647;
 			files = (
 				C6DA1ED1135A36BC00572D3E /* main.cpp in Sources */,
+				C6DA1EDA135A417C00572D3E /* LexAnalyzer.cpp in Sources */,
+				C6DA1EDD135A41AC00572D3E /* stdafx.cpp in Sources */,
+				C6DA1F83135A423100572D3E /* Token.cpp in Sources */,
+				C6DA1F84135A423100572D3E /* TokenImport.cpp in Sources */,
+				C6DA1FC0135A423100572D3E /* TokenSemicolon.cpp in Sources */,
+				C6DA1FD6135A4DC100572D3E /* compilerexception.cpp in Sources */,
+				C6DA1FE9135A5C9500572D3E /* Statement.cpp in Sources */,
+				C6DA1FED135A5CBD00572D3E /* FunctionCode.cpp in Sources */,
+				C6DA1FF0135A5CE900572D3E /* SemanticInfo.cpp in Sources */,
+				C6DA1FF3135A5D4500572D3E /* Tipo.cpp in Sources */,
+				C6DA1FF8135A5D5E00572D3E /* Cadena.cpp in Sources */,
+				C6DA1FF9135A5D5E00572D3E /* Caracter.cpp in Sources */,
+				C6DA2000135A5D8C00572D3E /* Booleano.cpp in Sources */,
+				C6DA2001135A5D8C00572D3E /* Flotante.cpp in Sources */,
+				C6DA2002135A5D8C00572D3E /* Integer.cpp in Sources */,
+				C6DA2005135A5D9F00572D3E /* ContextSimbols.cpp in Sources */,
+				C6DA2008135AA03B00572D3E /* codegenerator.cpp in Sources */,
+				C631D73B135AD5F700FC0C06 /* TokenTagOpen.cpp in Sources */,
+				C631D73E135AD60100FC0C06 /* TokenTagClose.cpp in Sources */,
+				C631D741135AD61100FC0C06 /* TokenTerminal.cpp in Sources */,
+				C631D747135AD64D00FC0C06 /* TokenParserCode.cpp in Sources */,
+				C631D74A135AD66600FC0C06 /* TokenNonTerminal.cpp in Sources */,
+				C631D74D135AD67B00FC0C06 /* TokenClass.cpp in Sources */,
+				C631D750135AD6B900FC0C06 /* TokenComma.cpp in Sources */,
+				C631D753135AD9ED00FC0C06 /* TokenID.cpp in Sources */,
+				C631D756135ADA0700FC0C06 /* TokenProduction.cpp in Sources */,
+				C631D759135ADA1C00FC0C06 /* TokenPipe.cpp in Sources */,
+				C631D762135ADB6C00FC0C06 /* TokenJavaCode.cpp in Sources */,
+				C631D766135AEA6F00FC0C06 /* TokenDeclaration.cpp in Sources */,
+				C631D769135AED1900FC0C06 /* TokenEof.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -194,6 +386,7 @@
 				C6DA1ED7135A36BC00572D3E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
