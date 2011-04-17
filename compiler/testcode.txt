@@ -1,0 +1,22 @@
+<% import
+%>
+%class prueba
+<% parser_code
+%>
+
+Terminal a,b,c;
+nonterminal Long X,Y;
+nonterminal Integer Z;
+
+
+X -> Y a b 
+	| Z;
+
+Y -> b b a;
+
+Z -> c {
+		$ = new Integer($0);
+	
+ 		}
+
+		|;
