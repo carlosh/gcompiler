@@ -15,6 +15,8 @@ class symbol
     string id;
     
 public:
-    symbol(void);
+    symbol(string _id);
     ~symbol(void);
+    
+    string getID();
 };

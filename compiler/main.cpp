@@ -12,6 +12,7 @@
 #include <iostream>
 #include "LexAnalyzer.h"
 #include "codegenerator.h"
+#include "compilerexception.h"
 
 int main (int argc, const char * argv[])
 {
@@ -48,10 +49,10 @@ int main (int argc, const char * argv[])
 			codegenerator* cc = new codegenerator(lex);
 			cc->start();
 		}
-		catch(exception* c)
+		catch(compilerexception* c)
 		{
 			error = true;
-			printf("Error located at line %d, column %d :%s", lex->LineNumber(), lex->ColNumber(), c->what());
+			printf("Error located at line %d, column %d :%s \r\n", lex->LineNumber(), lex->ColNumber(), c->what());
 		}
         
         

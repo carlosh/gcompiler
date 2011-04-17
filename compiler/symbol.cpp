@@ -8,12 +8,17 @@
 
 #include "symbol.h"
 
-symbol::symbol(void)
+symbol::symbol(string _id)
 {
-    
+    id = _id;
 }
 
 symbol::~symbol(void)
 {
     
+}
+
+string symbol::getID()
+{
+    return id;
 }

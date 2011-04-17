@@ -6,9 +6,18 @@
 //  Copyright 2011 Software Factory, LLC. All rights reserved.
 //
 
-#include "symbol.h"
+#pragma once
 
-class nonterminal : symbol
+#include "symbol.h"
+#include <string>
+
+using namespace std;
+
+class nonterminal : public symbol
 {
+    string returnObjectID;
+    
+public:
+    nonterminal(string _id, string objectName);
     
 };

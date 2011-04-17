@@ -7,3 +7,8 @@
 //
 
 #include "terminal.h"
+
+terminal::terminal(string _id) : symbol(_id)
+{
+    
+}

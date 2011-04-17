@@ -7,3 +7,10 @@
 //
 
 #include "nonterminal.h"
+
+nonterminal::nonterminal(string _id, string objectName)
+: symbol(_id)
+{
+
+    returnObjectID = objectName;
+}

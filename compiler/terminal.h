@@ -8,7 +8,13 @@
 
 
 #include "symbol.h"
+#include <string>
 
-class terminal : symbol
+using namespace std;
+
+class terminal : public symbol
 {
+    
+public:
+    terminal(string _id);
 };
