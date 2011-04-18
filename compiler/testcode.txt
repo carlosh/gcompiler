@@ -9,7 +9,7 @@ nonterminal Long X,Y;
 nonterminal Integer Z;
 
 
-X -> Y a b 
+X -> {return 10} Y { x = java; } a b { return 0; }
 	| Z;
 
 Y -> b b a;
@@ -18,5 +18,5 @@ Z -> c {
 		$ = new Integer($0);
 	
  		}
+		|{return 30};
 
-		|;

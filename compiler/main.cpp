@@ -57,7 +57,7 @@ int main (int argc, const char * argv[])
         
         
 		if (!error)
-			printf("\r\n\r\n\r\nCompilation ended successfully \r\n");
+			printf("\r\n\r\n\r\nCompilation ended successfully! \r\n");
 		
         
 		fclose(file);

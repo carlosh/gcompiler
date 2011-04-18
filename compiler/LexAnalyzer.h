@@ -54,6 +54,8 @@ public:
 	bool isLetter(char c);
 	bool isSpace(char c);
 	bool isEnter(char c);
+    
+    void reset();
 
 };
 

@@ -10,6 +10,7 @@
 #include "TokenInclude.h"
 #include <typeinfo>
 #include "compilerexception.h"
+#include <iostream>
 
 codegenerator::codegenerator(LexAnalyzer* tlex)
 {
@@ -18,6 +19,8 @@ codegenerator::codegenerator(LexAnalyzer* tlex)
     parseCode = false;
     classDeclaration = false;
     className = "";
+    
+    terminalList.push_back(new terminal(EPSILON));
 }
 
 
@@ -47,12 +50,55 @@ void codegenerator::start()
                 tagTerminal();
             else if ( typeid(*token) == typeid(TokenNonTerminal) )
                 tagNonTerminal();
-            
+            else if ( typeid(*token) == typeid(TokenID) )
+                tagProductions();
             
             
             if ( typeid(*token) == typeid(TokenEof) )
 				break;
 		}
+        
+        //check if every nonterminal has a production.
+        vector<nonterminal*>::iterator iterNonTerminal;
+        
+        for (iterNonTerminal = nonterminalList.begin(); iterNonTerminal != nonterminalList.end(); ++iterNonTerminal) {
+            
+            string nonTerminalID = (*iterNonTerminal)->getID();
+          
+            if (!isNonTerminalInProduction(nonTerminalID))
+                throw new compilerexception("Non Terminal (" + nonTerminalID + ") has no productions.");
+            
+        }
+        
+
+        //display production list
+        vector<production*>::iterator iterProd;
+        
+        for (iterProd = gramatica.begin(); iterProd != gramatica.end(); ++iterProd) {
+            
+            printf("%s -> ", (*iterProd)->getVariable()->getID().c_str());
+            
+            vector<symbol*>::iterator iterSymbol;
+            
+            vector<string> codigo = (*iterProd)->getCodigo();
+            
+            int symbolPos = 0;
+            for (iterSymbol = (*iterProd)->getSymbols().begin(); iterSymbol != (*iterProd)->getSymbols().end(); ++iterSymbol) 
+            {
+                printf("%s ", codigo[symbolPos].c_str());
+                printf("%s ", (*iterSymbol)->getID().c_str());
+                
+                symbolPos++;
+            }
+            
+            if (symbolPos < codigo.size())
+                printf("%s ", codigo[symbolPos].c_str());
+            
+            
+            
+            printf("\r\n");
+            
+        }
 	}
 	catch(exception* c)
 	{
@@ -170,7 +216,7 @@ void codegenerator::tagTerminal()
             {
                 string id = lex->currentToken()->lexema();
                                
-                if (isIdInList(id))
+                if (isSymbolDeclared(id))
                 {
                     throw new compilerexception("Symbol ID (" + id + ") already declared!");
                 }
@@ -227,7 +273,7 @@ void codegenerator::tagNonTerminal()
                 
                 string id = lex->currentToken()->lexema();
                 
-                if (isIdInList(id))
+                if (isSymbolDeclared(id))
                 {
                     throw new compilerexception("Symbol ID (" + id + ") already declared!");
                 }
@@ -253,7 +299,8 @@ void codegenerator::tagNonTerminal()
 }
 
 
-bool codegenerator::isIdInList(string id)
+
+bool codegenerator::isTerminal(string id)
 {
     bool found = false;
     
@@ -266,7 +313,32 @@ bool codegenerator::isIdInList(string id)
             break;
         }
     }
+    
+    return found;
+}
 
+bool codegenerator::isNonTerminalInProduction(string id)
+{
+    bool found = false;
+    
+    vector<production*>::iterator prodIterator;
+    
+    for (prodIterator = gramatica.begin(); prodIterator != gramatica.end(); ++prodIterator) {
+        if ( (*prodIterator)->getVariable()->getID() == id )
+        {
+            found = true;
+            break;
+        }
+    }    
+    
+    
+    return found;
+}
+
+bool codegenerator::isNonTerminal(string id)
+{
+    bool found = false;
+    
     vector<nonterminal*>::iterator iterNonTerminal;
     
     for (iterNonTerminal = nonterminalList.begin(); iterNonTerminal != nonterminalList.end(); ++iterNonTerminal) {
@@ -275,7 +347,186 @@ bool codegenerator::isIdInList(string id)
             found = true;
             break;
         }
-    }
+    }    
+    
     
     return found;
+}
+
+nonterminal* codegenerator::getNonTerminal(string id)
+{
+    vector<nonterminal*>::iterator iterNonTerminal;
+    
+    for (iterNonTerminal = nonterminalList.begin(); iterNonTerminal != nonterminalList.end(); ++iterNonTerminal) {
+        if ( (*iterNonTerminal)->getID() == id )
+        {
+            return *iterNonTerminal;
+        }
+    }    
+    
+    return NULL;
+}
+
+terminal* codegenerator::getTerminal(string id)
+{
+    vector<nonterminal*>::iterator iterNonTerminal;
+    
+    vector<terminal*>::iterator iterTerminal;
+    
+    for (iterTerminal = terminalList.begin(); iterTerminal != terminalList.end(); ++iterTerminal) {
+        if ( (*iterTerminal)->getID() == id )
+        {
+            return *iterTerminal;
+        }
+    }
+    
+    return NULL;
+}
+
+symbol* codegenerator::getSymbol(string id)
+{
+    symbol* symbolObj = NULL;
+    
+    symbolObj = getNonTerminal(id);
+    
+    if (symbolObj != NULL)
+        return symbolObj;
+    
+    symbolObj = getTerminal(id);
+    
+    return symbolObj;
+    
+}
+
+
+bool codegenerator::isSymbolDeclared(string id)
+{
+    bool foundTerminal, foundNonTerminal = false;
+    
+    foundTerminal = isTerminal(id);
+    foundNonTerminal = isNonTerminal(id);
+
+    
+    return foundTerminal || foundNonTerminal;
+}
+
+void codegenerator::tagProductions()
+{
+    while (typeid(*lex->currentToken()) != typeid(TokenEof)) {
+        
+        //id
+        string variableString = lex->currentToken()->lexema();
+        
+        if (isTerminal(variableString))
+        {
+            throw new compilerexception("Terminal symbol (" + variableString + ") cannot be on the left side of the production!");  
+        }
+        
+        if (!isNonTerminal(variableString))
+        {
+           throw new compilerexception("Non Terminal Symbol (" + variableString + ") not declared!");    
+        }
+        
+        nonterminal* symbol = getNonTerminal(variableString);
+        
+        lex->nextToken();
+        
+        if (typeid(*lex->currentToken()) != typeid(TokenProduction))
+            throw new compilerexception("Token '->' expected!"); 
+        
+        lex->nextToken();
+        
+        parseSymbols(symbol);
+        
+        
+        
+        
+    }
+}
+
+void codegenerator::parseSymbols(nonterminal* nonTerminalSymbol)
+{
+    
+    
+    while (true) {
+        
+        production* prod = new production(nonTerminalSymbol);
+        
+        gramatica.push_back(prod);
+        
+        string code = "";
+        
+        if (typeid(*lex->currentToken()) == typeid(TokenJavaCode))
+        {
+            code = lex->currentToken()->lexema();
+            lex->nextToken();
+            
+            prod->addCode(code);
+        }
+        else
+            prod->addCode(" ");
+
+        
+        while (true)
+        {
+            
+            if (typeid(*lex->currentToken()) == typeid(TokenPipe))
+                break;
+                
+            
+            if (typeid(*lex->currentToken()) != typeid(TokenID) && typeid(*lex->currentToken()) != typeid(TokenSemicolon)  )
+                throw new compilerexception("Symbol expected!"); 
+            
+            if (typeid(*lex->currentToken()) == typeid(TokenSemicolon))
+            {
+                prod->addSymbol(getSymbol(EPSILON));
+            }
+            else
+            {
+                
+                symbol* symbolObj = getSymbol(lex->currentToken()->lexema());
+                
+                if (symbolObj == NULL)
+                {
+                   throw new compilerexception("Undefined symbol (" + lex->currentToken()->lexema() + ")!");  
+                }
+                
+                lex->nextToken();
+                
+                if (typeid(*lex->currentToken()) == typeid(TokenJavaCode))
+                {
+                    code = lex->currentToken()->lexema();
+                    lex->nextToken();
+                    
+                    prod->addCode(code);
+                }
+                else
+                    prod->addCode(" ");
+                
+                
+                prod->addSymbol(symbolObj);
+                
+            }
+            
+            if (typeid(*lex->currentToken()) == typeid(TokenPipe) || typeid(*lex->currentToken()) == typeid(TokenSemicolon) )
+                break; //next production from same variable.
+
+        }
+        
+        if (typeid(*lex->currentToken()) == typeid(TokenPipe))
+        {
+            lex->nextToken();
+            continue; //next production from same variable.
+        }
+        
+        if (typeid(*lex->currentToken()) == typeid(TokenSemicolon))
+        {
+            lex->nextToken();
+            break;
+        }
+        
+        if (typeid(*lex->currentToken()) == typeid(TokenEof))
+             throw new compilerexception("Unexpected Eof!"); 
+        
+    }
 }

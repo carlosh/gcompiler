@@ -11,6 +11,9 @@
 #include <vector>
 #include "terminal.h"
 #include "nonterminal.h"
+#include "production.h"
+
+#define EPSILON "_epsilon"
 
 class codegenerator
 {
@@ -40,6 +43,15 @@ public:
     void tagDeclaration();
     void tagTerminal();
     void tagNonTerminal();
+    void tagProductions();
+    void parseSymbols(nonterminal* symbol);
     
-    bool isIdInList(string id);
+    
+    bool isNonTerminalInProduction(string id);
+    symbol* getSymbol(string id);
+    terminal* getTerminal(string id);
+    nonterminal* getNonTerminal(string id);
+    bool isTerminal(string id);
+    bool isNonTerminal(string id);
+    bool isSymbolDeclared(string id);
 };

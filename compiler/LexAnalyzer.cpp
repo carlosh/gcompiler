@@ -105,7 +105,7 @@ Token* LexAnalyzer::internalNextToken()
                 
 				nextSymbol();
                 
-				if (isLetter(currentSymbol()) || isDigit(currentSymbol()) || currentSymbol() == '_' )
+				if (isLetter(currentSymbol()) || isDigit(currentSymbol()) || currentSymbol() == '_' || currentSymbol() == '<' || currentSymbol() == '>')
 					estado = 2;			
 				else
 				{
@@ -115,7 +115,7 @@ Token* LexAnalyzer::internalNextToken()
                 
 				break;
 			case 2: //ID 2
-				if (isLetter(currentSymbol()) || isDigit(currentSymbol()) || currentSymbol() == '_' )
+				if (isLetter(currentSymbol()) || isDigit(currentSymbol()) || currentSymbol() == '_' || currentSymbol() == '<' || currentSymbol() == '>')
 				{	
 					c = currentSymbol();
 					lexema.append(1,tolower(c));
@@ -328,6 +328,15 @@ char LexAnalyzer::currentSymbol()
 	}
 	else 
 		return 0;
+}
+
+void LexAnalyzer::reset()
+{
+    currentBufferPosition = 0;
+    currentTokenBytes = 0;
+    _currentToken = NULL;
+    colNumber = 0;
+    lineNumber = 0;
 }
 
 void LexAnalyzer::rewindToLastToken()
