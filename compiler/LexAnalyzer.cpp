@@ -25,7 +25,7 @@ LexAnalyzer::LexAnalyzer(void *_buffer, long buffer_size)
 	//Fill Reserved Words.
 	reservedWords["import"] = &createNewInstance<TokenImport>;
 	reservedWords["class"] = &createNewInstance<TokenClass>;
-	reservedWords["parsecode"] = &createNewInstance<TokenParserCode>;
+	reservedWords["parse_code"] = &createNewInstance<TokenParserCode>;
 	reservedWords["terminal"] = &createNewInstance<TokenTerminal>;
 	reservedWords["nonterminal"] = &createNewInstance<TokenNonTerminal>;
 
@@ -105,7 +105,7 @@ Token* LexAnalyzer::internalNextToken()
                 
 				nextSymbol();
                 
-				if (isLetter(currentSymbol()) || isDigit(currentSymbol()) || currentSymbol() == '_' || currentSymbol() == '<' || currentSymbol() == '>')
+				if (isLetter(currentSymbol()) || isDigit(currentSymbol()) || currentSymbol() == '_' || currentSymbol() == '<' || currentSymbol() == '>' ||currentSymbol() == '.')
 					estado = 2;			
 				else
 				{
@@ -115,7 +115,7 @@ Token* LexAnalyzer::internalNextToken()
                 
 				break;
 			case 2: //ID 2
-				if (isLetter(currentSymbol()) || isDigit(currentSymbol()) || currentSymbol() == '_' || currentSymbol() == '<' || currentSymbol() == '>')
+				if (isLetter(currentSymbol()) || isDigit(currentSymbol()) || currentSymbol() == '_' || currentSymbol() == '<' || currentSymbol() == '>' || currentSymbol() == '.')
 				{	
 					c = currentSymbol();
 					lexema.append(1,tolower(c));
