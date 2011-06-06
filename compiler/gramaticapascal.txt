@@ -1,0 +1,96 @@
+<% import
+%>
+%class prueba
+
+<% parse_code
+%>
+
+
+
+terminal PAR_DER, PAR_IZQ, SEMICOLON, COLON, BRACKET_IZQ, BRACKET_DER, COMA, PUNTOPUNTO, REAL, INTEGER, RESTA, NUM, ID, OPMULT, NOT, OPSUMA, OPREL, OPASIGNA, OF;
+terminal WHILE, ARRAY, IF, DO, FUNCTION, PROCEDURE, BEGIN, END, THEN, ELSE, VAR, PROGRAMA, PUNTO;
+
+
+nonterminal Long programa, declaraciones, declaraciones_subprogramas, lista_identificadores, proposicion_compuesta;
+nonterminal Long proposicion_procedimiento, variable, tipo, tipo_estandar, declaracion_subprograma;
+nonterminal Long encab_subprograma, argumentos, lista_parametros, proposiciones_optativas, lista_proposiciones, proposicion;
+nonterminal Long expresion, lista_expresiones, expresion_simple, termino, signo, factor;
+
+
+
+
+programa -> PROGRAMA ID PAR_IZQ lista_identificadores PAR_DER SEMICOLON
+            declaraciones
+            declaraciones_subprogramas
+            proposicion_compuesta PUNTO;
+
+
+lista_identificadores -> ID
+            |lista_identificadores COMA ID;
+
+declaraciones -> declaraciones VAR lista_identificadores COLON tipo SEMICOLON
+            |;
+
+
+tipo -> tipo_estandar
+            | ARRAY BRACKET_IZQ NUM PUNTOPUNTO NUM BRACKET_DER OF tipo_estandar;
+
+tipo_estandar -> INTEGER 
+            |REAL;
+
+declaraciones_subprogramas -> declaraciones_subprogramas declaracion_subprograma SEMICOLON
+            |;
+
+declaracion_subprograma -> encab_subprograma declaraciones proposicion_compuesta;
+
+
+encab_subprograma -> FUNCTION ID argumentos COLON tipo_estandar SEMICOLON
+            | PROCEDURE ID argumentos SEMICOLON;
+
+argumentos -> PAR_IZQ lista_parametros PAR_DER
+            |;
+
+lista_parametros -> lista_identificadores COLON tipo
+            |lista_parametros SEMICOLON lista_identificadores COLON tipo;
+
+proposicion_compuesta -> BEGIN proposiciones_optativas END;
+
+proposiciones_optativas -> lista_proposiciones
+            |;
+
+lista_proposiciones -> proposicion
+            |lista_proposiciones SEMICOLON proposicion;
+
+proposicion -> variable OPASIGNA expresion
+            |proposicion_procedimiento
+            |proposicion_compuesta
+            |IF expresion THEN proposicion ELSE proposicion
+            |WHILE expresion DO proposicion;
+
+variable -> ID
+            |ID BRACKET_IZQ expresion BRACKET_DER;
+
+proposicion_procedimiento -> ID
+            |ID PAR_IZQ lista_expresiones PAR_DER;
+
+lista_expresiones -> expresion
+            |lista_expresiones COMA expresion;
+
+expresion -> expresion_simple
+            |expresion_simple OPREL expresion_simple;
+
+expresion_simple-> termino
+            |signo termino
+            |expresion_simple OPSUMA termino;
+
+termino -> factor
+            |termino OPMULT factor;
+
+factor -> ID
+            |ID PAR_IZQ lista_expresiones PAR_DER
+            |NUM
+            |PAR_IZQ expresion PAR_DER
+            |NOT factor;
+
+signo -> OPSUMA
+            | RESTA;

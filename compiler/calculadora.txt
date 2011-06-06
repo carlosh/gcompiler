@@ -1,0 +1,24 @@
+<% import
+%>
+%class prueba
+
+<% parse_code
+%>
+
+
+
+terminal MULT, SUMA, id, PAR_IZQ, PAR_DER;
+nonterminal Long E, EP, F, TP, T;
+
+E -> T EP;
+
+EP -> SUMA T EP
+        |;
+
+T -> F TP;
+
+TP -> MULT F TP
+    |;
+
+F -> PAR_IZQ E PAR_DER
+    | id;
