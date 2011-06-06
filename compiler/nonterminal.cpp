@@ -14,3 +14,8 @@ nonterminal::nonterminal(string _id, string objectName)
 
     returnObjectID = objectName;
 }
+
+string nonterminal::getReturnObjectID()
+{
+    return returnObjectID;
+}

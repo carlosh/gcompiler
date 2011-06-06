@@ -100,8 +100,9 @@ Token* LexAnalyzer::internalNextToken()
 				break;
 			case 1: //ID 1
 				c = currentSymbol();
-				lexema.append(1,tolower(c));
-				token = new TokenID();
+				//lexema.append(1,tolower(c));
+				lexema.append(1,c);
+                token = new TokenID();
                 
 				nextSymbol();
                 
@@ -118,8 +119,9 @@ Token* LexAnalyzer::internalNextToken()
 				if (isLetter(currentSymbol()) || isDigit(currentSymbol()) || currentSymbol() == '_' || currentSymbol() == '<' || currentSymbol() == '>' || currentSymbol() == '.')
 				{	
 					c = currentSymbol();
-					lexema.append(1,tolower(c));
-					nextSymbol();
+					//lexema.append(1,tolower(c));
+					lexema.append(1,c);
+                    nextSymbol();
 				}
 				else
 				{

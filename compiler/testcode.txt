@@ -1,5 +1,4 @@
 <% import
-import a.v.c
 %>
 %class prueba
 
@@ -8,22 +7,10 @@ import a.v.c
 
 
 
-Terminal a,b,c;
-nonterminal Long X, Y;
-nonterminal Integer Z;
+terminal d, c;
+nonterminal Long S, C;
 
+S -> C C;    
 
-X -> {return 10} Y { x = java; } a b { return 0; }
-	| Z;
-
-
-
-
-Z -> c {
-		$ = new Integer($0);
-	
- 		}
-		|{return 30};
-
-
-Y -> a;
+C -> c C
+    |d;

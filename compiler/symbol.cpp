@@ -22,3 +22,14 @@ string symbol::getID()
 {
     return id;
 }
+
+
+int symbol::getNumericID()
+{
+    return numericID;
+}
+
+void symbol::setNumericID(int nid)
+{
+    numericID = nid;
+}

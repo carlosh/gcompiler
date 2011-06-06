@@ -19,5 +19,6 @@ class nonterminal : public symbol
     
 public:
     nonterminal(string _id, string objectName);
+    string getReturnObjectID();
     
 };

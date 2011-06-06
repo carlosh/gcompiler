@@ -1,0 +1,17 @@
+<% import
+%>
+%class prueba
+
+<% parse_code
+%>
+
+
+
+terminal NUM, MAS;
+
+nonterminal INT E, T;
+
+E -> T MAS E
+|T;
+
+T -> NUM;

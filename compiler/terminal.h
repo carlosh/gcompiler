@@ -6,7 +6,7 @@
 //  Copyright 2011 Software Factory, LLC. All rights reserved.
 //
 
-
+#pragma once
 #include "symbol.h"
 #include <string>
 

@@ -19,6 +19,7 @@ class production
     nonterminal* variable;
     vector<symbol*> symbols;
     vector<string> codigo;
+   
     
 public:
     production(nonterminal* nonterminalVariable);
@@ -29,4 +30,7 @@ public:
     nonterminal* getVariable();
     vector<symbol*> getSymbols();
     vector<string> getCodigo();
+    
+
+    
 };

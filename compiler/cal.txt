@@ -1,0 +1,21 @@
+<% import
+%>
+%class prueba
+
+<% parse_code
+%>
+
+
+
+terminal NUM, MAS, MULT, PA, PC;
+
+nonterminal INT E, T, F;
+
+E -> E MAS T
+ |T;
+
+T -> T MULT F
+  |F;
+
+F -> NUM
+  |PA E PC;
