@@ -25,5 +25,7 @@ public:
     
     string getID();
     
+    virtual string javaString(){ return "";};
+    
     virtual void f(){}; //Just to make typeid returned the derived type correclty uss=ing rtti.
 };

@@ -18,6 +18,8 @@ symbol::~symbol(void)
     
 }
 
+
+
 string symbol::getID()
 {
     return id;

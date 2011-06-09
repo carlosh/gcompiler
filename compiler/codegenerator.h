@@ -82,6 +82,8 @@ public:
     bool isNonTerminal(string id);
     bool isSymbolDeclared(string id);
     
+    bool productionKernelListEqual(vector<ProductionItem*> listA, vector<ProductionItem*> listB);
+    
     void cerradura(ItemSet* item);
     void printProduction(production* prod, int dotPosition);
     void processItem(ItemSet* item);
@@ -89,18 +91,33 @@ public:
     vector<terminal*> primero(symbol* sym);
     
     bool checkIfItemSetExists(ItemSet* itemSet, int* estadoID);
+    void moveIraTo(State *estadoFrom, State *estadoTo);
+    
+    vector<ProductionItem*> uniqueKernelProductionList(ItemSet* set);
+    
+    void mergeStates(State* baseState, State* toMerge);
     
     ItemSet* ir_a(ItemSet* itemSet, symbol* sym);
     
     bool productionItemEqual(ProductionItem* prodItemA, ProductionItem* prodItemB, bool ignoreDotPosition, bool ignoreLookAhead);
+    bool productionItemEqualForMerge(ProductionItem* prodItemA, ProductionItem* prodItemB, bool ignoreDotPosition, bool ignoreLookAhead);
+    
     
     //bool productionEqual(production* a, production* b);
     bool itemSetEqual(ItemSet *itemSetA, ItemSet *itemSetB);
+    
+    void PrintItemSets();
+    
+    void createStates();
+    
+    ItemSet* getItemSetForState(ItemSet *itemSet);
     
     void generateJavaFile();
     void generateJavaSymFile();
     
     int getReducirLocation(production* prod);
+    
+    bool itemSetEqualForState(ItemSet *itemSetA, ItemSet *itemSetB);
     
     void moveTransitions(State* estadoFrom, State* estadoTo);
     void moveTransitionsTo(State* estadoFrom, State* estadoTo);

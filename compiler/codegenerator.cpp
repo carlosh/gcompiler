@@ -123,11 +123,12 @@ void codegenerator::start()
         tempProd->setPassId(passId);
         item0->addProduction(tempProd);
         itemSetList[0] = item0;
-        
+        item0->setId(0);
         
         
         cerradura(item0);
         
+        item0->setStateIDToItems(0);
         
         //crear estado inicial.
         State* estado = new State(false, 0);
@@ -183,7 +184,7 @@ void codegenerator::start()
             for (long i = 0; i < totalItems; i++) {
                 
                 ProductionItem* prodItem = (*currentSet->getProductionItems())[i];  //((ProductionItem*)*iterProdItem);
-                if (!prodItem->getIsGotoProcessed() && prodItem->getPassId() == passId)
+                if (!prodItem->getIsGotoProcessed())
                 {
                     prodItem->setGotoProcessed(true);
                     symbol* sym = prodItem->nextSymbol();
@@ -196,6 +197,7 @@ void codegenerator::start()
                         
                         
                         
+                    
                         //just for now.
                         if ( sym != NULL && sym->getID() == EPSILON )
                         {
@@ -221,6 +223,7 @@ void codegenerator::start()
                             
                             continue;
                         }
+                     
                         
                         if (sym != NULL)
                         {
@@ -242,10 +245,11 @@ void codegenerator::start()
                                     
                                     State* estadoNuevo = new State(isAccept, estadoSiguiente);
                                     
-                                    Transition* transition = new Transition(sym, estadoNuevo);
+                                    Transition* transition = new Transition(sym, estadoNuevo->getID());
                                     
                                     currentState->addTransition(transition);
                                     estadoNuevo->setItemSet(newSet);
+                                    newSet->setStateIDToItems(estadoSiguiente);
                                     
                                     listaEstados[estadoSiguiente] = estadoNuevo;
                                     
@@ -267,12 +271,15 @@ void codegenerator::start()
                                         currentState->addIra(ir);
                                     }
                                     
+                                    
                                     //nos alistamos para el estado siguiente
                                     estadoSiguiente++;
+                                    
+                                   
                                 }
                                 else
                                 {
-                                    Transition* transition = new Transition(sym, listaEstados.find(estadoFoundID)->second);
+                                    Transition* transition = new Transition(sym, listaEstados.find(estadoFoundID)->second->getID());
                                     currentState->addTransition(transition);
                                     
                                     //hay que agregar los elementos que no son identicos, es decir que el lookahead es diferente.
@@ -347,11 +354,15 @@ void codegenerator::start()
         
         printf("\n");
         
+        
+        PrintItemSets();
+        
         printStates();
-    
         
-        printf("%d Estados creados.\n", estadoActual - 1);
+        printf("%d Item sets creados.\n", estadoActual - 1);
         
+        
+               
         printf("Minimizando estados...\n");
         
         
@@ -360,7 +371,20 @@ void codegenerator::start()
         
         printf("\n\n\n\n");
         
+        //createStates();
+        
+        printf("\n\n\n");
+        
+        
         printStates();
+        
+        
+
+        
+        //PrintItemSets();
+        //printStates();
+        
+        
         
         printf("Total estados despues de minimizar -> %d\n", (int)listaEstados.size());
         
@@ -376,6 +400,7 @@ void codegenerator::start()
 		printf("Error located at line %d, column %d :%s", lex->LineNumber(), lex->ColNumber(), c->what());
 	} 
 }
+
 
 bool codegenerator::moveProductionFromItemSet(ItemSet *itemSetFrom, ItemSet *itemSetTo)
 {
@@ -421,14 +446,241 @@ bool codegenerator::moveProductionFromItemSet(ItemSet *itemSetFrom, ItemSet *ite
     
 }
 
+void codegenerator::createStates()
+{
 
+    vector<State*> estadosNuevos;
+    vector<ItemSet*> itemSetsToDelete;
+    
+    
+    estadoSiguiente = 0;
+    
+    map<int, ItemSet*>::iterator itFirst;
+    
+    for (itFirst = itemSetList.begin(); itFirst != itemSetList.end(); ++itFirst) {
+        
+        ItemSet* set = itFirst->second;
+
+        State* estadoNuevo = new State(false, estadoSiguiente);
+        listaEstados[estadoSiguiente] = estadoNuevo;
+        estadoNuevo->setItemSet(set);
+        
+        vector<ProductionItem*>::iterator iterProdItem;
+        
+        long totalItems = set->getProductionItems()->size();
+        
+        
+        map<string, symbol*> listaSym;
+        
+        //for (iterProdItem = currentSet->getProductionItems().begin(); iterProdItem != currentSet->getProductionItems().end(); ++iterProdItem) {
+        for (long i = 0; i < totalItems; i++) {
+            
+            ProductionItem* prodItem = (*set->getProductionItems())[i];  //((ProductionItem*)*iterProdItem);
+            prodItem->setGotoProcessed(true);
+            symbol* sym = prodItem->nextSymbol();
+            
+            if ( sym != NULL && sym->getID() != EPSILON )
+            {
+                map<string, symbol*>::iterator itSym = listaSym.find(sym->getID());
+                
+                if ( itSym != listaSym.end() )
+                    continue;
+                
+                
+                listaSym.insert(pair<string, symbol*>(sym->getID(), sym));
+            }
+            
+            //just for now.
+            if ( sym != NULL && sym->getID() == EPSILON )
+            {
+                //add reduce
+                int reducePosition = getReducirLocation(prodItem->getProduction()); 
+                
+                if (prodItem->getProduction()->getVariable()->getID() == START)
+                { 
+                    Accion* accion = new Accion(ACCEPT, reducePosition, prodItem->getLookAhead());
+                    estadoNuevo->addAccion(accion);    
+                }
+                else if (reducePosition > 0)
+                {
+                    Accion* accion = new Accion(REDUCE, reducePosition, prodItem->getLookAhead());
+                    estadoNuevo->addAccion(accion);
+                }
+                continue;
+            }
+
+            if (sym != NULL)
+            {
+                
+            ItemSet* gotoSet = ir_a(set, sym);
+            
+            //int estadoFoundID = 0;
+            //bool itemExists = checkIfItemSetExists(gotoSet, &estadoFoundID); 
+                                       
+                ItemSet* newSet = getItemSetForState(gotoSet);
+                
+                if (newSet != NULL)
+                {
+                    Transition* transition = new Transition(sym, newSet->getId());
+                    
+                    estadoNuevo->addTransition(transition);
+                    
+                    if (estadoSiguiente == 1)
+                        estadoNuevo->setIsAccept(true);
+                    
+                    
+                    //agregar lista de acciones e ir_a
+                    if ( typeid(*sym) == typeid(terminal) )
+                    {
+                        Accion* accion = new Accion(SHIFT, newSet->getId() , (terminal*)sym);
+                        
+                        estadoNuevo->addAccion(accion);
+                        
+                    }
+                    else if ( typeid(*transition->getConsume()) == typeid(nonterminal) )
+                    {
+                        Ira* ir = new Ira(newSet->getId(), (nonterminal*)sym);
+                        
+                        estadoNuevo->addIra(ir);
+                    }
+                    
+                    //estadoSiguiente++;
+                }
+                else
+                {
+                    printf("No se encuentra ItemSet -> %d Symbolo : %s, Desde ItemSet : %d Estado : %d \n", gotoSet->getId(), sym->getID().c_str(), set->getId(), estadoNuevo->getID());
+                }
+            }
+            else
+            {
+                //add reduce
+                int reducePosition = getReducirLocation(prodItem->getProduction()); 
+                
+                
+                if (prodItem->getProduction()->getVariable()->getID() == START)
+                { 
+                    Accion* accion = new Accion(ACCEPT, reducePosition, prodItem->getLookAhead());
+                    if (!estadoNuevo->accionExists(accion))
+                        estadoNuevo->addAccion(accion);    
+                }
+                else if (reducePosition > 0)
+                {
+                    Accion* accion = new Accion(REDUCE, reducePosition, prodItem->getLookAhead());
+                    estadoNuevo->addAccion(accion);
+                }
+            }
+            
+            //nos alistamos para el estado siguiente
+            
+           
+            
+        }
+        
+        estadoSiguiente++;
+        listaSym.clear();
+    }
+}
+
+
+
+void codegenerator::minimizar()
+{
+    
+    vector<State*> estadosToDelete;
+   
+    map<int, State*>::iterator itFirst;
+    
+    for (itFirst = listaEstados.begin(); itFirst != listaEstados.end(); ++itFirst) {
+        
+        State* set1 = itFirst->second;
+        
+        if (!set1->getMarkedForDelete())
+        {
+            map<int, State*>::iterator itSecond;
+            
+            for (itSecond = listaEstados.begin(); itSecond != listaEstados.end(); ++itSecond) {
+                
+                //for (int j = 0; j < totalStates; j++) {
+                
+                State* set2 = itSecond->second;
+                
+                if (!set2->getMarkedForDelete())
+                {
+                    
+                    if ( itFirst->second->getID() != itSecond->second->getID() && !set1->getMarkedForDelete() )
+                    {
+                        if (productionKernelListEqual(uniqueKernelProductionList(set1->getItemSet()), uniqueKernelProductionList(set2->getItemSet())))
+                        {
+                            
+                            mergeStates(set1, set2);
+                            
+                            set2->setMarkedForDelete(true);
+                            
+                            
+                            estadosToDelete.push_back(set2);
+                            
+                            
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    
+    
+    
+    //ahora borramos los estados de la lista de estados.
+    
+    int t = listaEstados.size();
+    //int y = estadosNuevos.size();
+    int totalStates = estadosToDelete.size();
+    
+    int z = t - totalStates;
+    
+    for (int i = 0; i < totalStates; i++) {
+        
+        State* set = estadosToDelete[i];
+        
+        listaEstados.erase(set->getID());
+        
+        
+        //como ya no debe de haber ninguna referencia, liberamos la memoria
+        //delete estado;
+        //if (estado != NULL)
+        //delete estado;
+    }
+    
+    int t2 = listaEstados.size();
+    //int y2 = estadosNuevos.size();
+    
+    /*
+     //ahora agregamos los nuevos estados a la lista de estados.
+     totalStates = estadosNuevos.size();
+     
+     for (int i = 0; i < totalStates; i++) {
+     
+     State* estado = estadosNuevos[i];
+     
+     listaEstados.insert(pair<int, State*>(estado->getID(), estado));
+     }
+     
+     */  
+    
+    
+    
+    
+}
+
+/*
 void codegenerator::minimizar()
 {
 
     vector<State*> estadosNuevos;
-    vector<State*> estadosToDelete;
+    vector<ItemSet*> itemSetsToDelete;
     
-    long totalStates = listaEstados.size();
+    
+    //long totalStates = listaEstados.size();
     
     bool again;
     
@@ -436,36 +688,46 @@ void codegenerator::minimizar()
     
         again = false;
         
-    map<int, State*>::iterator itFirst;
+    map<int, ItemSet*>::iterator itFirst;
     
-    for (itFirst = listaEstados.begin(); itFirst != listaEstados.end(); ++itFirst) {
+    for (itFirst = itemSetList.begin(); itFirst != itemSetList.end(); ++itFirst) {
         //for (int i = 0; i < totalStates; i++) {
         
-        State* estado1 = itFirst->second;// listaEstados[i];
         
-        if (!estado1->getMarkedForDelete())
+        ItemSet* set1 = itFirst->second;// listaEstados[i];
+        
+        if (!set1->getIsMarkedForDelete())
         {
-            map<int, State*>::iterator itSecond;
+            map<int, ItemSet*>::iterator itSecond;
             
-            for (itSecond = listaEstados.begin(); itSecond != listaEstados.end(); ++itSecond) {
+            for (itSecond = itemSetList.begin(); itSecond != itemSetList.end(); ++itSecond) {
             
                 //for (int j = 0; j < totalStates; j++) {
                 
-                State* estado2 = itSecond->second;// listaEstados[j];
+                ItemSet* set2 = itSecond->second;// listaEstados[j];
                 
-                if (!estado2->getMarkedForDelete())
+                if (!set2->getIsMarkedForDelete())
                 {
                     
-                    if ( itFirst->second->getID() != itSecond->second->getID() && !estado1->getMarkedForDelete() )
+                    if ( itFirst->second != itSecond->second && !set1->getIsMarkedForDelete() )
                     {
-                        if (itemSetEqual(estado1->getItemSet(), estado2->getItemSet()))
+                        if (itemSetEqual(set1, set2))
                         {
-                            again = true;
+                            
+                            mergeStates(<#State *baseState#>, <#State *toMerge#>)
+                            
+                            //again = true;
                             //printf(".");
                             
                             //Crear nuevo estado de 1 y 2
                             
-                            State* estadoNuevo = new State(false, estadoSiguiente);
+                            
+                            moveProductionFromItemSet(set2, set1);
+                            
+                            set2->setIsMarkedForDelete(true);
+                            itemSetsToDelete.push_back(set2);
+                            
+                            /*State* estadoNuevo = new State(false, estadoSiguiente);
                             
                             
                             //movemos todas las transiciones de estos estados al nuevo.
@@ -510,6 +772,8 @@ void codegenerator::minimizar()
                             
                             //set next possible next state id
                             estadoSiguiente++;
+                             
+                             
                         }
                     }
                 }
@@ -517,20 +781,22 @@ void codegenerator::minimizar()
         }
     }
     
+        
+        
     
     //ahora borramos los estados de la lista de estados.
     
-    int t = listaEstados.size();
-    int y = estadosNuevos.size();
-    totalStates = estadosToDelete.size();
+    int t = itemSetList.size();
+    //int y = estadosNuevos.size();
+    int totalSets = itemSetsToDelete.size();
     
-    int z = t + y - totalStates;
+    //int z = t + y - totalStates;
     
-    for (int i = 0; i < totalStates; i++) {
+    for (int i = 0; i < totalSets; i++) {
         
-        State* estado = estadosToDelete[i];
+        ItemSet* set = itemSetsToDelete[i];
         
-        listaEstados.erase(estado->getID());
+        itemSetList.erase(set->getId());
         
         
         //como ya no debe de haber ninguna referencia, liberamos la memoria
@@ -539,10 +805,10 @@ void codegenerator::minimizar()
         //delete estado;
     }
     
-    int t2 = listaEstados.size();
-    int y2 = estadosNuevos.size();
+    int t2 = itemSetList.size();
+    //int y2 = estadosNuevos.size();
     
-    
+    /*
     //ahora agregamos los nuevos estados a la lista de estados.
     totalStates = estadosNuevos.size();
     
@@ -553,13 +819,25 @@ void codegenerator::minimizar()
         listaEstados.insert(pair<int, State*>(estado->getID(), estado));
     }
         
-        
+      
         
     } while (again);
     
     
 }
+*/
 
+void codegenerator::mergeStates(State* baseState, State* toMerge)
+{
+
+    moveProductionFromItemSet(toMerge->getItemSet(), baseState->getItemSet());
+    moveTransitions(toMerge, baseState);
+    moveTransitionsTo(toMerge, baseState);
+    moveAccionesTo(toMerge, baseState);
+    moveAcciones(toMerge, baseState);
+    moveIra(toMerge, baseState);
+    moveIraTo(toMerge, baseState);
+}
 
 void codegenerator::moveAccionesTo(State *estadoFrom, State *estadoTo)
 {
@@ -597,6 +875,41 @@ void codegenerator::moveAccionesTo(State *estadoFrom, State *estadoTo)
     }
 }
 
+void codegenerator::moveIraTo(State *estadoFrom, State *estadoTo)
+{
+    long totalStates = listaEstados.size();
+    
+    
+    map<int, State*>::iterator itStates;
+    
+    for (itStates = listaEstados.begin(); itStates != listaEstados.end(); ++itStates) {
+        
+        //for (int i = 0; i < totalStates; i++) {
+        
+        State* estado = itStates->second;// listaEstados[i];
+        
+        
+        //for (int i = 0; i < totalStates; i++) {
+        
+        //State* estado = listaEstados[i];
+        
+        //if (!estado->getMarkedForDelete())
+        {
+            long totalIra = estado->getListaIra().size();
+            
+            for (long j = 0; j < totalIra; j++) {
+                
+                Ira* ira = estado->getListaIra()[j];
+                
+                if ( ira->getEstadoID() == estadoFrom->getID() )
+                {
+                    ira->setEstadoID(estadoTo->getID());
+                }
+            }
+        }
+        
+    }
+}
 
 
 void codegenerator::moveAcciones(State *estadoFrom, State *estadoTo)
@@ -636,12 +949,13 @@ void codegenerator::moveIra(State *estadoFrom, State *estadoTo)
         
         if (!estadoTo->iraExists(ira))
             estadoTo->addIra(ira);
-        //else
-        //{
-        //    //error
-        //    string tipoAccion = (accion->getTipo() == 0?"Desplazar":(accion->getTipo() == 1?"Reducir":"Aceptar"));
-        //    throw new compilerexception("La acción de " + tipoAccion + " esta duplicada con el terminal : " + accion);
-        //}
+        else
+        {
+            //error
+            //printf("ssssss\n");
+            //string tipoAccion = (accion->getTipo() == 0?"Desplazar":(accion->getTipo() == 1?"Reducir":"Aceptar"));
+            //throw new compilerexception("La acción de " + tipoAccion + " esta duplicada con el terminal : " + accion);
+        }
     }
     
     estadoFrom->getListaIra().clear();
@@ -668,9 +982,9 @@ void codegenerator::moveTransitionsTo(State *estadoFrom, State *estadoTo)
             
             Transition* transition = estado->getTransitions()[j];
             
-            if ( transition->getState()->getID() == estadoFrom->getID() )
+            if ( transition->getState() == estadoFrom->getID() )
             {
-                transition->setState(estadoTo);
+                transition->setState(estadoTo->getID());
             }
         }
         
@@ -702,6 +1016,56 @@ long codegenerator::getNextStateID()
     return estadoSiguiente;
 }
 
+
+
+void codegenerator::PrintItemSets()
+{
+    
+    map<int, ItemSet*>::iterator itStates;
+    
+    //long totalStates = listaEstados.size();
+    
+    int i = 0;
+    for (itStates = itemSetList.begin(); itStates != itemSetList.end(); ++itStates) {
+        
+        
+        //for (int i = 0; i < totalStates; i++) {
+        
+        
+        ItemSet* itemSet = itStates->second;
+        
+        vector<ProductionItem*>::iterator iterProdItem;
+        
+        long total = itemSet->getProductionItems()->size();
+        
+        //for (long j = 0; j < total; j++) {
+        
+        for (iterProdItem = (*itemSet->getProductionItems()).begin(); iterProdItem != (*itemSet->getProductionItems()).end(); ++iterProdItem) {
+            
+            ProductionItem* prodItem = ((ProductionItem*)*iterProdItem);// (*itemSet->getProductionItems())[j];
+            
+            printf("I%d ", i);
+            
+            printf("%s", prodItem->getIsKernel()?"(k)":"");
+            
+            printProduction(prodItem->getProduction(), prodItem->getDotPosition());
+            
+            printf("/ %s", (prodItem->getLookAhead()->getID().c_str()));
+            
+            printf(" -- %s", prodItem->getIsGotoProcessed()?"YES":"NO");
+            
+            
+            printf("\n");
+        }
+        
+        printf("\n\n\n");
+
+        i++;
+        
+    }
+}
+
+
 void codegenerator::printStates()
 {
     
@@ -725,11 +1089,16 @@ void codegenerator::printStates()
         
         //for (long j = 0; j < total; j++) {
             
+        int lines = 0;
         for (iterProdItem = (*itemSet->getProductionItems()).begin(); iterProdItem != (*itemSet->getProductionItems()).end(); ++iterProdItem) {
             
             ProductionItem* prodItem = ((ProductionItem*)*iterProdItem);// (*itemSet->getProductionItems())[j];
             
             printf("I%d (%d)", i, estado->getID());
+            
+            printf("%s", prodItem->getIsKernel()?"(k)":"");
+            
+            printf("[%d]", prodItem->getOriginalState());
             
             printProduction(prodItem->getProduction(), prodItem->getDotPosition());
             
@@ -738,10 +1107,14 @@ void codegenerator::printStates()
             printf(" -- %s", prodItem->getIsGotoProcessed()?"YES":"NO");
             
             printf("\r\n");
+            
+            lines++;
         }
         
-        printf("\r\n");
         
+        printf("\n");
+        printf("Productions -> %d\n", lines);
+        printf("\n");
         
         printf("<acciones>\n");
         
@@ -798,7 +1171,7 @@ void codegenerator::printStates()
             Transition* transition = estado->getTransitions()[j];
             
             
-            printf("with %s to %d\n", transition->getConsume()->getID().c_str(), transition->getState()->getID());
+            printf("with %s to %d\n", transition->getConsume()->getID().c_str(), transition->getState());
             
         }
         
@@ -819,30 +1192,34 @@ int codegenerator::getReducirLocation(production *prod)
         
         production* fromLista = gramatica[i];
         
-        if ( fromLista->getSymbols().size() == prod->getSymbols().size() )
+        if (prod->getVariable()->getID() == fromLista->getVariable()->getID())
         {
-            vector<symbol*>::iterator listaTerminales;
             
-            //int j = 0;
-            bool equal = true;
-            long totalj = fromLista->getSymbols().size();
-            
-            for (int j = 0; j < totalj; j++) {
-                //for (listaTerminales = fromLista->getSymbols().begin(); listaTerminales != fromLista->getSymbols().end(); ++listaTerminales) {
+            if ( fromLista->getSymbols().size() == prod->getSymbols().size() )
+            {
+                vector<symbol*>::iterator listaTerminales;
                 
-                symbol* simboloA = fromLista->getSymbols()[j];//  *listaTerminales;
+                //int j = 0;
+                bool equal = true;
+                long totalj = fromLista->getSymbols().size();
                 
-                if ( prod->getSymbols()[j] != simboloA )
-                {
-                    equal = false;
-                    break;
+                for (int j = 0; j < totalj; j++) {
+                    //for (listaTerminales = fromLista->getSymbols().begin(); listaTerminales != fromLista->getSymbols().end(); ++listaTerminales) {
+                    
+                    symbol* simboloA = fromLista->getSymbols()[j];//  *listaTerminales;
+                    
+                    if ( prod->getSymbols()[j] != simboloA )
+                    {
+                        equal = false;
+                        break;
+                    }
+                    
+                    //j++;
                 }
                 
-                //j++;
+                if (equal)
+                    return (int)(i);
             }
-            
-            if (equal)
-                return (int)(i);
         }
     }
     
@@ -892,7 +1269,7 @@ void codegenerator::insertarProducciones(FILE *file)
         
         nt->setNumericID(numericID);
         
-        data = "\t\tsymbols.put(String.valueOf(" + to_string(nt->getNumericID()) + "), new Nonterminal(\"" + nt->getID() + "\", " + to_string(nt->getNumericID()) + "));\n";
+        data = "\t\tsymbols.put(" + nt->javaString() + ", new Nonterminal(\"" + nt->getID() + "\", " + to_string(nt->getNumericID()) + "));\n";
         fputs(data.c_str(), file);
         
         numericID++;
@@ -922,7 +1299,7 @@ void codegenerator::insertarProducciones(FILE *file)
         
         fputs("\t\t//Produccion...\n", file);
         
-        data = "\t\tprod = new Production((Nonterminal)symbols.get(String.valueOf(" + to_string(prod->getVariable()->getNumericID()) + ")));\n";
+        data = "\t\tprod = new Production((Nonterminal)symbols.get(" + prod->getVariable()->javaString() + "));\n";
         
         fputs(data.c_str(), file);
         
@@ -940,12 +1317,12 @@ void codegenerator::insertarProducciones(FILE *file)
             
             if (typeid(*simbolo) == typeid(terminal))
             {
-                data = "\t\tprod.getSimbolos().add(symbols.get(String.valueOf(" + to_string(simbolo->getNumericID()) + ")));\n";
+                data = "\t\tprod.getSimbolos().add(symbols.get(" + simbolo->javaString() + "));\n";
                 fputs(data.c_str(), file);
             }
             else
             {
-                data = "\t\tprod.getSimbolos().add(symbols.get(String.valueOf(" + to_string(simbolo->getNumericID()) + ")));\n";
+                data = "\t\tprod.getSimbolos().add(symbols.get(" + simbolo->javaString() + "));\n";
                 fputs(data.c_str(), file);
             }
         }
@@ -1004,7 +1381,7 @@ void codegenerator::insertarEstados(FILE *file)
             //terminal* ter = (*iterAcciones).first;
             Transition* transition = estado->getTransitions()[j];
             
-            data = "\t\ttransition = new Transition(symbols.get(String.valueOf(" + to_string(transition->getConsume()->getNumericID()) + ")), " + to_string(transition->getState()->getID()) + ");\n";
+            data = "\t\ttransition = new Transition(symbols.get(String.valueOf(" + to_string(transition->getConsume()->getNumericID()) + ")), " + to_string(transition->getState()) + ");\n";
             fputs(data.c_str(), file);
             
             fputs("\t\tstate.getTransitions().add(transition);\n", file);
@@ -1030,7 +1407,7 @@ void codegenerator::insertarEstados(FILE *file)
             data = "\t\taccion = new Accion(" + tonto + (accion->getTipo() == SHIFT?"Accion.tipo_accion.SHIFT":(accion->getTipo() == REDUCE?"Accion.tipo_accion.REDUCE":"Accion.tipo_accion.ACCEPT")) + tonto + ", " + to_string(accion->getEstadoID()) + ");\n";
             fputs(data.c_str(), file);
             
-            data = "\t\tstate.getListaAcciones().put((Terminal)symbols.get(String.valueOf(" + to_string(accion->getTerminal()->getNumericID()) + ")), accion);\n";
+            data = "\t\tstate.getListaAcciones().put((Terminal)symbols.get(" + accion->getTerminal()->javaString() + "), accion);\n";
             fputs(data.c_str(), file);
             
         }
@@ -1055,7 +1432,7 @@ void codegenerator::insertarEstados(FILE *file)
             data = "\t\tira = new Ira(" + to_string(ira->getEstadoID()) + ");\n";
             fputs(data.c_str(), file);
             
-            data = "\t\tstate.getListaIra().put((Nonterminal)symbols.get(String.valueOf(" + to_string(ira->getNonTerminal()->getNumericID()) + ")), ira);\n";
+            data = "\t\tstate.getListaIra().put((Nonterminal)symbols.get(" + ira->getNonTerminal()->javaString() + "), ira);\n";
             fputs(data.c_str(), file); 
         }
         
@@ -1161,6 +1538,57 @@ void codegenerator::generateJavaFile()
 }
 
 
+ItemSet* codegenerator::getItemSetForState(ItemSet *itemSet)
+{
+    //long totalSets = itemSetList.size();
+    
+    map<int, ItemSet*>::iterator it;
+    
+    for (it = itemSetList.begin(); it != itemSetList.end(); ++it) {
+        //for (int i = 0; i < totalSets; i++) {
+        
+        ItemSet* itemFromList = it->second;// itemSetList[i];
+        
+        
+        if (itemSetEqualForState(itemSet, itemFromList))
+        {
+            return itemFromList;
+        }
+        
+    }
+    
+    
+    return NULL;
+        /*
+        //if (itemFromList->getProductionItems()->size() == itemSet->getProductionItems()->size())
+        {
+            long totalItems = itemFromList->getProductionItems()->size();
+            
+            bool isEqual = true;
+            //for (iterProdItem = currentSet->getProductionItems().begin(); iterProdItem != currentSet->getProductionItems().end(); ++iterProdItem) {
+            for (long j = 0; j < totalItems; j++) {
+                
+                ProductionItem* prodItemList = (*itemFromList->getProductionItems())[j];
+                ProductionItem* prodItemSet =  (*itemSet->getProductionItems())[j];
+                
+                if ( !productionItemEqual(prodItemList, prodItemSet, false, false) )
+                {
+                    isEqual = false;
+                    break;
+                }
+            }
+            
+            if (isEqual)
+            {
+                return true;
+            }
+        }
+    }
+    
+    return false;
+         
+         */
+}
 
 
 bool codegenerator::checkIfItemSetExists(ItemSet *itemSet, int* estadoID)
@@ -1173,6 +1601,7 @@ bool codegenerator::checkIfItemSetExists(ItemSet *itemSet, int* estadoID)
         
         if (itemFromList->getProductionItems()->size() == itemSet->getProductionItems()->size())
         {
+            
             long totalItems = itemFromList->getProductionItems()->size();
             
             bool isEqual = true;
@@ -1200,7 +1629,7 @@ bool codegenerator::checkIfItemSetExists(ItemSet *itemSet, int* estadoID)
     return false;
 }
 
-bool codegenerator::itemSetEqual(ItemSet *itemSetA, ItemSet *itemSetB)
+bool codegenerator::itemSetEqualForState(ItemSet *itemSetA, ItemSet *itemSetB)
 {
     ItemSet *menor;
     ItemSet *mayor;
@@ -1209,7 +1638,7 @@ bool codegenerator::itemSetEqual(ItemSet *itemSetA, ItemSet *itemSetB)
     
     //if (itemSetA->getProductionItems()->size() != itemSetB->getProductionItems()->size())
     //    return false;
- 
+    
     if (itemSetA->getProductionItems()->size() >= itemSetB->getProductionItems()->size())
     {
         mayor = itemSetA;
@@ -1220,25 +1649,175 @@ bool codegenerator::itemSetEqual(ItemSet *itemSetA, ItemSet *itemSetB)
         mayor = itemSetB;
         menor = itemSetA;
     }
-        
-        
     
-        
-        
+    
+    
+    
+    
     long totalItems = menor->getProductionItems()->size();
-        
+    
     for (long j = 0; j < totalItems; j++) {
         
         ProductionItem* prodMenor = (*menor->getProductionItems())[j];
         
-        long totalItemsMayor = mayor->getProductionItems()->size();
+        if (prodMenor->getIsKernel())
+        {
+            
+            long totalItemsMayor = mayor->getProductionItems()->size();
+            
+            bool isEqual = false;
+            for (int i = 0; i < totalItemsMayor; i++) {
+                
+                ProductionItem* prodMayor = (*mayor->getProductionItems())[i];
+                
+                if ( productionItemEqual(prodMayor, prodMenor, true, true) )
+                {
+                    isEqual = true;
+                    break;
+                }
+            }
+            
+            if (!isEqual)
+            {
+                return false;
+            }
+        }
+    }
+    
+    if (itemSetA->getProductionItems()->size() == 0 || itemSetB->getProductionItems()->size() == 0 )
+        return false;
+    
+    return true;
+}
+
+vector<ProductionItem*> codegenerator::uniqueKernelProductionList(ItemSet* set)
+{
+    vector<ProductionItem*> list;
+    
+    vector<ProductionItem*>::iterator it;
+    
+    for (it = set->getProductionItems()->begin(); it != set->getProductionItems()->end(); it++) {
+        ProductionItem* prod = (*it);
+        
+        
+        if (prod->getIsKernel())
+        {
+            
+            vector<ProductionItem*>::iterator it2;
+            
+            
+            bool dontAdd = false;
+            for (it2 = list.begin(); it2 != list.end(); ++it2) {
+                ProductionItem* prod2 = *it2;
+                
+                if (prod2->getIsKernel())
+                {
+                    if (productionItemEqual(prod, prod2, false, true))
+                    {
+                        dontAdd = true;
+                    }
+                }
+            }
+            
+            if (!dontAdd)
+                list.push_back(prod);
+        }
+        
+    }
+    
+    return list;
+    
+}
+
+bool codegenerator::itemSetEqual(ItemSet *itemSetA, ItemSet *itemSetB)
+{
+    ItemSet *menor;
+    ItemSet *mayor;
+    
+    
+    
+    //if (itemSetA->getProductionItems()->size() != itemSetB->getProductionItems()->size())
+    //    return false;
+    
+    if (itemSetA->getProductionItems()->size() >= itemSetB->getProductionItems()->size())
+    {
+        mayor = itemSetA;
+        menor = itemSetB;
+    }
+    else
+    {
+        mayor = itemSetB;
+        menor = itemSetA;
+    }
+    
+    
+    
+    
+    
+    long totalItems = menor->getProductionItems()->size();
+    
+    for (long j = 0; j < totalItems; j++) {
+        
+        ProductionItem* prodMenor = (*menor->getProductionItems())[j];
+        
+        if (prodMenor->getIsKernel())
+        {
+            
+            long totalItemsMayor = mayor->getProductionItems()->size();
+            
+            bool isEqual = false;
+            for (int i = 0; i < totalItemsMayor; i++) {
+                
+                ProductionItem* prodMayor = (*mayor->getProductionItems())[i];
+                
+                //if (prodMayor->getIsKernel())
+                {
+                    if ( productionItemEqualForMerge(prodMayor, prodMenor, false, true) )
+                    {
+                        isEqual = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (!isEqual)
+            {
+                return false;
+            }
+        }
+    }
+    
+    if (itemSetA->getProductionItems()->size() == 0 || itemSetB->getProductionItems()->size() == 0 )
+        return false;
+    
+    return true;
+}
+
+
+bool codegenerator::productionKernelListEqual(vector<ProductionItem*> listA, vector<ProductionItem*> listB)
+{
+    
+    if (listA.size() != listB.size())
+        return false;
+ 
+        
+    
+        
+        
+    long totalItems = listA.size();
+        
+    for (long j = 0; j < totalItems; j++) {
+        
+        ProductionItem* prodMenor = listA[j];
+        
+        long totalItemsMayor = listB.size();
         
         bool isEqual = false;
         for (int i = 0; i < totalItemsMayor; i++) {
 
-            ProductionItem* prodMayor = (*mayor->getProductionItems())[i];
-            
-            if ( productionItemEqual(prodMayor, prodMenor, false, true) )
+            ProductionItem* prodMayor = listB[i];
+                
+            if ( productionItemEqualForMerge(prodMayor, prodMenor, false, true) )
             {
                 isEqual = true;
                 break;
@@ -1249,11 +1828,9 @@ bool codegenerator::itemSetEqual(ItemSet *itemSetA, ItemSet *itemSetB)
         {
             return false;
         }
+        
     }
-    
-    if (itemSetA->getProductionItems()->size() == 0 || itemSetB->getProductionItems()->size() == 0 )
-        return false;
-    
+
     return true;
 }
 
@@ -1274,14 +1851,13 @@ void codegenerator::printProduction(production* prod, int dotPosition)
         
         symbol* sym = (prod)->getSymbols()[symbolPos];
         
-        printf("%s ", codigo[symbolPos].c_str());
+        //printf("%s ", codigo[symbolPos].c_str());
         
         if (symbolPos == dotPosition)
             printf("%s ", "(*)");
 
         printf("%s ", sym->getID().c_str());
         
-               
         
         //symbolPos++;
     }
@@ -1289,8 +1865,8 @@ void codegenerator::printProduction(production* prod, int dotPosition)
     if (symbolPos == dotPosition)
         printf("%s ", "(*)");
     
-    if (symbolPos < codigo.size())
-        printf("%s ", codigo[symbolPos].c_str());
+    //if (symbolPos < codigo.size())
+    //    printf("%s ", codigo[symbolPos].c_str());
     
     
 
@@ -1562,7 +2138,9 @@ ItemSet* codegenerator::ir_a(ItemSet* itemSet, symbol* sym)
                 ProductionItem* newItem = new ProductionItem(prodItem->getProduction(), prodItem->getLookAhead(), false);
                 
                 
+                newItem->setIsKernel(true);
                 newItem->setPassId(passId);
+                newItem->setGotoProcessed(false);
                 
                 newItem->setDotPosition(prodItem->getDotPosition());
                 
@@ -1741,6 +2319,49 @@ void codegenerator::cerradura(ItemSet* itemSet)
     
 }
 
+bool codegenerator::productionItemEqualForMerge(ProductionItem *prodItemA, ProductionItem *prodItemB, bool ignoreDotPosition, bool ignoreLookAhead)
+{
+    if ( prodItemA->getProduction()->getSymbols().size() == prodItemB->getProduction()->getSymbols().size() )
+    {
+        
+        if (prodItemA->getProduction()->getVariable()->getID() != prodItemB->getProduction()->getVariable()->getID())
+            return false;
+        
+        if (!ignoreDotPosition)
+            if ( prodItemA->getDotPosition() != prodItemB->getDotPosition() )
+                return false;
+        
+        
+        if (!ignoreLookAhead)
+        {
+            if ( prodItemA->getLookAhead()->getID() != prodItemB->getLookAhead()->getID() )
+                return false;
+        }
+        
+        vector<symbol*>::iterator listaTerminales;
+        
+        //int i = 0;
+        long totalLista = prodItemA->getProduction()->getSymbols().size();
+        for (int i = 0; i < totalLista; i++) {
+            //for (listaTerminales = prodItemA->getProduction()->getSymbols().begin(); listaTerminales != prodItemA->getProduction()->getSymbols().end(); ++listaTerminales) {
+            symbol* simboloA = prodItemA->getProduction()->getSymbols()[i];// *listaTerminales;
+            
+            if ( prodItemB->getProduction()->getSymbols()[i]->getID() != simboloA->getID() )
+            {
+                return false;
+            }
+            //i++;
+        }
+        
+        
+        
+        return true;
+        
+    }
+    else
+        return false;
+}
+
 bool codegenerator::productionItemEqual(ProductionItem *prodItemA, ProductionItem *prodItemB, bool ignoreDotPosition, bool ignoreLookAhead)
 {
     if ( prodItemA->getProduction()->getSymbols().size() == prodItemB->getProduction()->getSymbols().size() )
@@ -1846,7 +2467,7 @@ void codegenerator::aumentar()
         inicio->addCode("");
         
         inicio->addSymbol(gramatica[0]->getVariable());
-        //inicio->addSymbol(getTerminal(EOFT));
+        inicio->addSymbol(getTerminal(EOFT));
         
         gramatica.insert(gramatica.begin(), inicio);
     }

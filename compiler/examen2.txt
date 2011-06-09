@@ -1,0 +1,248 @@
+<% import
+%>
+%class prueba
+
+<% parse_code
+%>
+
+
+
+   
+terminal           SEMI, PLUS, MINUS, TIMES, DIVIDE, LPAREN, RPAREN, EQUAL,COMMA;
+terminal           FUNCTION,BEGIN,END,RETURN;
+terminal   NUMBER, ID;
+   
+nonterminal String     expr_list, expr_part,id_list,e_l,decl_function,decl_function_l,inicio;
+nonterminal CodigoGenerado    expr, factor, term;
+   
+
+  inicio -> decl_function_l expr_list
+  				{
+  					
+  					String codigo = lf + "\n" +
+  									"start:  \n\n\n\n" + e;
+  									
+  									
+  					RESULT = codigo; 
+  				
+  				
+  				};
+
+
+   decl_function_l -> decl_function decl_function_l
+   					{
+   						String codigo = lf + "\n" +
+   										f + "\n" ;
+   										
+   										
+   						RESULT = codigo;
+   					
+   					
+   					}
+                   |
+                   {
+                   	RESULT = "\n";
+                   };
+
+   decl_function -> FUNCTION ID LPAREN id_list RPAREN BEGIN expr_list END
+   					{
+   						
+   						String codigo = id + ":\n" +
+   										"push ebp\n" +
+   										"mov ebp, esp\n" +
+   										"sub esp, 4\n" +
+   										"mov dword[ebp-4],0 ;contador para parametros \n" +
+   										idlist + 
+   										e + "\n";	
+   									
+	
+						RESULT = codigo;
+   					
+   					};
+   					
+
+   id_list -> ID COMMA id_list
+   				{
+   					id = "@" + id;
+             		InformacionGeneracion.getInstance().registerVariable(id,"dd","0");
+             		
+             		String codigo = idlist + "mov edx, dword[ebp-4] ;movemos el contador a edx para ver porque parametro vamos\n" +
+             						"mov eax, dword[ebp+8+edx*4]\n" + 
+             						"mov dword[" + id + "], eax\n" +
+             						"inc dword[ebp-4] ;lo incremementamos para el siguiente parametro \n";
+             		
+             		RESULT = codigo;
+   					
+   				
+   				}
+             |ID
+             {
+             	id = "@" + id;
+             	InformacionGeneracion.getInstance().registerVariable(id,"dd","0");
+             	
+             	String codigo = "inc dword[ebp-4]\n" +
+             					"mov eax, dword[ebp+8]\n" +
+             					"mov [" + id + "], eax\n";
+             	
+             	
+             	RESULT = codigo;
+             
+             };
+
+  e_l -> expr COMMA e_l
+  		{
+  			String codigo = el + e.getCodigo() + 
+         					"push " + e.getLugar() + "\n" +
+         					"inc ebx\n";	
+         					
+         					
+         	RESULT = codigo;	
+  			
+  		}
+         |expr
+         {
+         	
+         	String codigo = e.getCodigo() + 
+         					"push " + e.getLugar() + "\n" +
+         					"mov ebx, 1\n";
+         	
+         
+         	RESULT = codigo;
+         };
+
+   expr_list -> expr_list expr_part
+                 { RESULT = el+ep;}
+                 |
+                 expr_part
+                 { RESULT = ep;}
+                 ;
+   
+
+
+
+   expr_part -> expr
+                 {
+                 
+                 
+                 	InformacionGeneracion.getInstance().registerVariable("msg","db","'%d',10,13,0");
+                 	
+                 	
+                    RESULT = e.getCodigo()+
+                                    "push "+e.getLugar()+
+                                    "\npush msg\ncall [printf]\nadd esp,8\n";
+                 }
+                 SEMI
+                 | ID EQUAL expr SEMI
+                 {
+                     id = "@" + id;
+                     InformacionGeneracion.getInstance().registerVariable(id,"dd","0");
+
+                     RESULT = e.getCodigo() +
+                              "mov eax,"+e.getLugar()+"\n"+
+                              "mov ["+id+"],eax\n";
+                 }
+                 | RETURN expr SEMI
+                 {
+                 	String codigo = e.getCodigo() + 
+                 					"mov eax, " + e.getLugar() + ";guardamos el valor de retorno \n" +
+                 					"mov esp, ebp\n" +
+									"pop ebp\n" +
+									"ret";
+									
+					RESULT = codigo;
+                 
+                 }
+                 ;
+  
+   expr      -> expr PLUS factor
+                   {
+                      String lugar = InformacionGeneracion.getInstance().generarEtiqueta("@T");
+                      InformacionGeneracion.getInstance().registerVariable(lugar,"dd","0");
+                      lugar="["+lugar+"]";
+                      String codigo = e.getCodigo()+f.getCodigo()+
+                                      "mov eax,"+e.getLugar()+"\n"+
+                                      "add eax,"+f.getLugar()+"\n"+
+                                      "mov "+lugar+",eax\n";
+                      RESULT  = new CodigoGenerado(codigo,lugar);
+                   }
+                 |
+                 expr MINUS factor
+                   {
+                      String lugar = InformacionGeneracion.getInstance().generarEtiqueta("@T");
+                      InformacionGeneracion.getInstance().registerVariable(lugar,"dd","0");
+                      lugar="["+lugar+"]";
+                      String codigo = e.getCodigo()+f.getCodigo()+
+                                      "mov eax,"+e.getLugar()+"\n"+
+                                      "sub eax,"+f.getLugar()+"\n"+
+                                      "mov "+lugar+",eax\n";
+                      RESULT  = new CodigoGenerado(codigo,lugar);
+                   }
+                 |
+                 factor
+                   { RESULT=f; }
+                 ;
+   
+   
+   factor    -> factor TIMES term
+                   {
+                      String lugar = InformacionGeneracion.getInstance().generarEtiqueta("@T");
+                      InformacionGeneracion.getInstance().registerVariable(lugar,"dd","0");
+                      lugar="["+lugar+"]";
+                      String codigo = f.getCodigo()+t.getCodigo()+
+                                      "mov eax,"+f.getLugar()+"\n"+
+                                      "imul eax,"+t.getLugar()+"\n"+
+                                      "mov "+lugar+",eax\n";
+                      RESULT  = new CodigoGenerado(codigo,lugar);
+                   }
+                 |
+                 factor DIVIDE term
+                 {
+                 	String lugar = InformacionGeneracion.getInstance().generarEtiqueta("@T");
+                 	InformacionGeneracion.getInstance().registerVariable(lugar, "dd", "0");
+                 	lugar="["+lugar+"]";
+                 	String codigo = f.getCodigo() + t.getCodigo() + 
+                 					"mov eax," + f.getLugar() + "\n" +
+                 					"mov edx, 0\n" +
+                 					"mov ebx, " + t.getLugar() + "\n" +
+                 					"idiv ebx\n" +
+                 					"mov " + lugar + ", eax \n";
+                 					
+                 	RESULT = new CodigoGenerado(codigo,lugar);
+                 }
+                 |
+                 term
+                  { RESULT =t; }
+                 ;
+      
+   term      -> LPAREN expr RPAREN
+                 { RESULT = e; }
+                 |
+                 NUMBER
+                 { RESULT = new CodigoGenerado("",n); }
+                 |
+                 ID
+                 { RESULT = new CodigoGenerado("","[@"+i+"]"); }
+                 | ID LPAREN e_l RPAREN
+                 {
+                 
+                 	String lugar = InformacionGeneracion.getInstance().generarEtiqueta("@T");
+                 	InformacionGeneracion.getInstance().registerVariable(lugar, "dd", "0");
+                 	lugar="["+lugar+"]";
+                 	
+                 	String lugarEsp = InformacionGeneracion.getInstance().generarEtiqueta("@T");
+                 	InformacionGeneracion.getInstance().registerVariable(lugarEsp, "dd", "0");
+                 	lugarEsp="["+lugarEsp+"]";
+                 	
+                 	
+                 	String codigo = el + 
+                 				"imul ebx, 4 \n" +
+                 				"mov " + lugarEsp + ", ebx\n" +
+                 				"call " + id + "\n" +
+                 				"add esp, " + lugarEsp + "\n" +
+                 				"mov " + lugar + ", eax \n"; 
+                 	
+                 	
+                 	RESULT = new CodigoGenerado(codigo, lugar);
+                 
+                 }
+                 ;

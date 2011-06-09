@@ -9,7 +9,7 @@
 #include "Transition.h"
 
 
-Transition::Transition(symbol* _consume, State* _toState)
+Transition::Transition(symbol* _consume, int _toState)
 {
     consume = _consume;
     toState = _toState;
@@ -17,7 +17,7 @@ Transition::Transition(symbol* _consume, State* _toState)
 
 
 
-State* Transition::getState()
+int Transition::getState()
 {
     return toState;
 }
@@ -28,7 +28,7 @@ symbol* Transition::getConsume()
 }
 
 
-void Transition::setState(State *newState)
+void Transition::setState(int newState)
 {
     toState = newState;
 }

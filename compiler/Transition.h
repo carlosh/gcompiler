@@ -14,13 +14,13 @@ class State;
 class Transition
 {
     symbol* consume;
-    State* toState;
+    int toState;
     
 public:
     
-    Transition(symbol* _consume, State* _toState);
+    Transition(symbol* _consume, int _toState);
     
-    State* getState();
+    int getState();
     symbol* getConsume();
-    void setState(State* newState);
+    void setState(int newState);
 };

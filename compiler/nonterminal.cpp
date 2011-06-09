@@ -19,3 +19,9 @@ string nonterminal::getReturnObjectID()
 {
     return returnObjectID;
 }
+
+
+string nonterminal::javaString()
+{
+    return "\"" + getID() + "\""; 
+}

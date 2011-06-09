@@ -8,7 +8,13 @@
 
 #include "terminal.h"
 
+
 terminal::terminal(string _id) : symbol(_id)
 {
     
+}
+
+string terminal::javaString()
+{
+    return "String.valueOf(sym." + getID() + ")";
 }

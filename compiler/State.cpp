@@ -113,7 +113,7 @@ void State::addTransition(Transition* transition)
         
         Transition* trans = *itt;
         
-        if ( trans->getConsume()->getID() == transition->getConsume()->getID() && trans->getState()->getID() == transition->getState()->getID() )
+        if ( trans->getConsume()->getID() == transition->getConsume()->getID() && trans->getState() == transition->getState() )
         {
             found = true;
             break;

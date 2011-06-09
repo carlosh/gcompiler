@@ -15,6 +15,7 @@ ProductionItem::ProductionItem(production* _prod, terminal* la, bool _isKernel)
     lookAhead = la;
     dotPosition = 0;
     isProcessed = false;
+    gotoProcessed = false;
     passId = 1;
 }
 
@@ -38,6 +39,16 @@ void ProductionItem::setPassId(int p)
 int ProductionItem::getPassId()
 {
     return passId;
+}
+
+void ProductionItem::setOriginalState(int os)
+{
+    originalState = os;
+}
+
+int ProductionItem::getOriginalState()
+{
+    return originalState;
 }
 
 void ProductionItem::setLookAhead(terminal* la)

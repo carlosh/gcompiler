@@ -7,15 +7,19 @@
 
 
 
-terminal NUM, MAS, MULT, PA, PC;
+terminal ID, MAS, MULT, PA, PC;
 
-nonterminal INT E, T, F;
+nonterminal INT E, T, F, TP, EP;
 
-E -> E MAS T
- |T;
+E -> T EP;
 
-T -> T MULT F
-  |F;
+EP -> MAS T EP
+    |;
 
-F -> NUM
-  |PA E PC;
+T -> F TP;
+
+TP -> MULT F TP
+    |;
+
+F -> ID
+    |PA E PC;

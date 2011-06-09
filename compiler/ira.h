@@ -20,4 +20,5 @@ public:
     
     int getEstadoID();
     nonterminal* getNonTerminal();
+    void setEstadoID(int id);
 };

@@ -20,6 +20,7 @@ class ProductionItem
     bool isProcessed;
     bool gotoProcessed;
     int passId;
+    int originalState;
     
 public:
     ProductionItem(production* _prod, terminal* _la, bool isKernel);
@@ -39,4 +40,7 @@ public:
     vector<symbol*> getBeta();
     int getPassId();
     void setPassId(int p);
+    void setOriginalState(int os);
+    int getOriginalState();
+    
 };

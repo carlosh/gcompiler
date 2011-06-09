@@ -24,3 +24,9 @@ nonterminal* Ira::getNonTerminal()
 {
     return nonterm;
 }
+
+
+void Ira::setEstadoID(int id)
+{
+    estadoID = id;
+}

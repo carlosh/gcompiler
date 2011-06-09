@@ -7,18 +7,14 @@
 
 
 
-terminal MULT, SUMA, id, PAR_IZQ, PAR_DER;
-nonterminal Long E, EP, F, TP, T;
+terminal MULT, MAS, NUM, PA, PC;
+nonterminal Long E, T, F;
 
-E -> T EP;
+E -> E MAS T
+    |T;
 
-EP -> SUMA T EP
-        |;
+T -> T MULT F
+    |F;
 
-T -> F TP;
-
-TP -> MULT F TP
-    |;
-
-F -> PAR_IZQ E PAR_DER
-    | id;
+F -> NUM 
+    |PA E PC;

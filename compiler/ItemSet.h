@@ -14,7 +14,9 @@ using namespace std;
 
 class ItemSet
 {
+    int id;
     vector<ProductionItem*>* items;
+    bool markedForDelete;
     
 public:
     
@@ -24,4 +26,13 @@ public:
     void addProduction(ProductionItem* prod);
     
     vector<ProductionItem*>* getProductionItems();
+    
+    void setId(int _id);
+    int getId();
+    bool getIsMarkedForDelete();
+    void setIsMarkedForDelete(bool b);
+    void setStateIDToItems(int id);
+    
+    //vector<ProductionItem*> uniqueKernelProductionList();
+    
 };
