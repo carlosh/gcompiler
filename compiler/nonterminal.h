@@ -15,11 +15,10 @@ using namespace std;
 
 class nonterminal : public symbol
 {
-    string returnObjectID;
     
 public:
     nonterminal(string _id, string objectName);
-    string getReturnObjectID();
+    
     
     string javaString();
     

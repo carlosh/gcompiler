@@ -11,6 +11,13 @@
 symbol::symbol(string _id)
 {
     id = _id;
+    returnObjectID = "";
+}
+
+symbol::symbol(string _id, string rt)
+{
+    id = _id;
+    returnObjectID = rt;
 }
 
 symbol::~symbol(void)
@@ -18,6 +25,11 @@ symbol::~symbol(void)
     
 }
 
+
+string symbol::getReturnObjectID()
+{
+    return returnObjectID;
+}
 
 
 string symbol::getID()

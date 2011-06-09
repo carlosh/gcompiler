@@ -21,3 +21,4 @@
 #include "TokenDeclaration.h"
 #include "TokenEof.h"
 #include "TokenComma.h"
+#include "TokenColon.h"

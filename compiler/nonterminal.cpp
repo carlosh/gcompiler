@@ -9,16 +9,10 @@
 #include "nonterminal.h"
 
 nonterminal::nonterminal(string _id, string objectName)
-: symbol(_id)
+: symbol(_id, objectName)
 {
-
-    returnObjectID = objectName;
 }
 
-string nonterminal::getReturnObjectID()
-{
-    return returnObjectID;
-}
 
 
 string nonterminal::javaString()

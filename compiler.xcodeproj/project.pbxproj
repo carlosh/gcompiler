@@ -28,6 +28,8 @@
 		C631D769135AED1900FC0C06 /* TokenEof.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C631D767135AED1700FC0C06 /* TokenEof.cpp */; };
 		C6D42C171376E8E700A9BF48 /* State.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D42C151376E8E700A9BF48 /* State.cpp */; };
 		C6D42C1A1376E8EE00A9BF48 /* Transition.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D42C181376E8EE00A9BF48 /* Transition.cpp */; };
+		C6D6172313A13EA1006C874D /* TokenColon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D6172113A13EA1006C874D /* TokenColon.cpp */; };
+		C6D6172713A166CD006C874D /* Parametro.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6D6172513A166CA006C874D /* Parametro.cpp */; };
 		C6DA1ED1135A36BC00572D3E /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1ED0135A36BC00572D3E /* main.cpp */; };
 		C6DA1EDA135A417C00572D3E /* LexAnalyzer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1ED8135A417C00572D3E /* LexAnalyzer.cpp */; };
 		C6DA1EDD135A41AC00572D3E /* stdafx.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C6DA1EDB135A41AC00572D3E /* stdafx.cpp */; };
@@ -113,6 +115,10 @@
 		C6D42C161376E8E700A9BF48 /* State.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = State.h; sourceTree = "<group>"; };
 		C6D42C181376E8EE00A9BF48 /* Transition.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Transition.cpp; sourceTree = "<group>"; };
 		C6D42C191376E8EE00A9BF48 /* Transition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Transition.h; sourceTree = "<group>"; };
+		C6D6172113A13EA1006C874D /* TokenColon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TokenColon.cpp; sourceTree = "<group>"; };
+		C6D6172213A13EA1006C874D /* TokenColon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TokenColon.h; sourceTree = "<group>"; };
+		C6D6172513A166CA006C874D /* Parametro.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Parametro.cpp; sourceTree = "<group>"; };
+		C6D6172613A166CC006C874D /* Parametro.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Parametro.h; sourceTree = "<group>"; };
 		C6DA1ECC135A36BC00572D3E /* compiler */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = compiler; sourceTree = BUILT_PRODUCTS_DIR; };
 		C6DA1ED0135A36BC00572D3E /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		C6DA1ED2135A36BC00572D3E /* compiler.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = compiler.1; sourceTree = "<group>"; };
@@ -252,6 +258,8 @@
 				C6017CD6139464D500CCC101 /* TableLR.h */,
 				C6017CD8139465A500CCC101 /* rowLR.cpp */,
 				C6017CD9139465A500CCC101 /* rowLR.h */,
+				C6D6172513A166CA006C874D /* Parametro.cpp */,
+				C6D6172613A166CC006C874D /* Parametro.h */,
 			);
 			path = compiler;
 			sourceTree = "<group>";
@@ -292,6 +300,8 @@
 				C631D765135AEA6E00FC0C06 /* TokenDeclaration.h */,
 				C631D767135AED1700FC0C06 /* TokenEof.cpp */,
 				C631D768135AED1800FC0C06 /* TokenEof.h */,
+				C6D6172113A13EA1006C874D /* TokenColon.cpp */,
+				C6D6172213A13EA1006C874D /* TokenColon.h */,
 			);
 			name = Tokens;
 			sourceTree = "<group>";
@@ -389,6 +399,8 @@
 				C6017CD41394647300CCC101 /* ira.cpp in Sources */,
 				C6017CD7139464D500CCC101 /* TableLR.cpp in Sources */,
 				C6017CDA139465A500CCC101 /* rowLR.cpp in Sources */,
+				C6D6172313A13EA1006C874D /* TokenColon.cpp in Sources */,
+				C6D6172713A166CD006C874D /* Parametro.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

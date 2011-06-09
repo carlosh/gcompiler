@@ -17,6 +17,7 @@ ProductionItem::ProductionItem(production* _prod, terminal* la, bool _isKernel)
     isProcessed = false;
     gotoProcessed = false;
     passId = 1;
+    
 }
 
 

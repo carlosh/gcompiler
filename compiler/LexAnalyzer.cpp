@@ -93,6 +93,8 @@ Token* LexAnalyzer::internalNextToken()
 					estado = 12;
                 else if (currentSymbol() == '|')
 					estado = 14;
+                else if (currentSymbol() == ':')
+                    estado = 15;
                 else
 					return NULL;
                 
@@ -207,7 +209,7 @@ Token* LexAnalyzer::internalNextToken()
 				break;
 			case 8: //{
 				c = currentSymbol();
-				lexema.append(1,c);
+				//lexema.append(1,c);
 				
                 token = new TokenJavaCode();
                 
@@ -235,7 +237,7 @@ Token* LexAnalyzer::internalNextToken()
 				break;
 			case 10:
 				c = currentSymbol();
-				lexema.append(1,c);
+				//lexema.append(1,c);
 				nextSymbol();
                 
 				token->appendToLexema(lexema);
@@ -275,6 +277,18 @@ Token* LexAnalyzer::internalNextToken()
 				lexema.append(1,c);
                 
                 token = new TokenPipe();
+                
+				nextSymbol();
+                
+                token->appendToLexema(lexema);
+                return token;
+				
+				break;
+            case 15: //:
+				c = currentSymbol();
+				lexema.append(1,c);
+                
+                token = new TokenColon();
                 
 				nextSymbol();
                 

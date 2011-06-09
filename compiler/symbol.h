@@ -14,12 +14,16 @@ class symbol
 {
     string id;
     int numericID;
+    string returnObjectID;
     
 public:
     symbol(string _id);
+    symbol(string _id, string _rt);
+    
     ~symbol(void);
     
     
+    string getReturnObjectID();
     int getNumericID();
     void setNumericID(int nid);
     

@@ -17,6 +17,7 @@ class terminal : public symbol
     
 public:
     terminal(string _id);
+    terminal(string _id, string rt);
     
     string javaString();
 };

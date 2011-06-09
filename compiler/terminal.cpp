@@ -14,6 +14,11 @@ terminal::terminal(string _id) : symbol(_id)
     
 }
 
+terminal::terminal(string _id, string objectName)
+: symbol(_id, objectName)
+{
+}
+
 string terminal::javaString()
 {
     return "String.valueOf(sym." + getID() + ")";

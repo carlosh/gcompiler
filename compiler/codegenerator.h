@@ -25,6 +25,7 @@ using namespace std;
 #define EPSILON "_epsilon"
 #define START  "$START"
 #define EOFT  "$"
+#define CODEPREFIX "CODIGO$"
 
 
 typedef std::map<int, ItemSet*> itemset_type;
@@ -54,7 +55,7 @@ private:
     
     string fileName;
     
-    int passId;
+    int codeID;
     
     void aumentar();
 
@@ -108,7 +109,7 @@ public:
     
     void PrintItemSets();
     
-    void createStates();
+    
     
     ItemSet* getItemSetForState(ItemSet *itemSet);
     
@@ -127,6 +128,7 @@ public:
     
     bool moveProductionFromItemSet(ItemSet* itemSetFrom, ItemSet* itemSetTo);
     
+    void printGramatica();
     int terminalPosition(terminal* t);
     
     void minimizar();
@@ -139,6 +141,7 @@ public:
     
     void insertarProducciones(FILE* file);
     void insertarEstados(FILE* file);
+    void insertarExecuteCodeMethod(FILE* file);
     
     
     

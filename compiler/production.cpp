@@ -11,6 +11,8 @@
 production::production(nonterminal* nonterminalvariable)
 {
     variable = nonterminalvariable;
+    codigo = "";
+    codigoId = -1;
 };
 
 void production::addSymbol(symbol* _symbol)
@@ -18,9 +20,9 @@ void production::addSymbol(symbol* _symbol)
     symbols.push_back(_symbol);
 }
 
-void production::addCode(string code)
+void production::setCodigo(string code)
 {
-    codigo.push_back(code);
+    codigo = code;
 }
 
 
@@ -35,12 +37,61 @@ vector<symbol*> production::getSymbols()
     return symbols;
 }
 
-vector<string> production::getCodigo()
+string production::getCodigo()
 {
     return codigo;
 }
 
+void production::setCodigoId(int id)
+{
+    codigoId = id;
+}
+
+int production::getCodigoId()
+{
+    return codigoId;
+}
 
 
+void production::addParametro(string id, symbol *sym)
+{
+    
+    
+    
+    Parametro* newParametro = new Parametro(id, sym->getReturnObjectID());
+    
+    parametros.push_back(newParametro);
+}
+
+vector<Parametro*> production::getParametros()
+{
+    return parametros;
+}
+
+string production::toString()
+{
+    string rt = getVariable()->getID() + " -> ";
+    
+    
+    vector<symbol*>::iterator iterSymbol;
+    
+    
+    //int symbolPos = 0;
+    long totalSym = symbols.size();
+    
+    int symbolPos;
+    for (symbolPos = 0; symbolPos < totalSym; symbolPos++) {
+        
+        symbol* sym = symbols[symbolPos];
+        
+        rt += sym->getID() + " ";
+        
+        
+        
+    }
+    
+
+    return rt;
+}
 
 

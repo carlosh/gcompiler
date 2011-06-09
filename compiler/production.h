@@ -11,6 +11,8 @@
 #include "symbol.h"
 #include <vector>
 #include <string>
+#include <map>
+#include "Parametro.h"
 
 using namespace std;
 
@@ -18,19 +20,26 @@ class production
 {
     nonterminal* variable;
     vector<symbol*> symbols;
-    vector<string> codigo;
-   
+    string codigo;
+    int codigoId;
+    vector<Parametro*> parametros;
     
 public:
     production(nonterminal* nonterminalVariable);
   
     void addSymbol(symbol* _symbol);
-    void addCode(string code);
+    void setCodigo(string code);
     
     nonterminal* getVariable();
     vector<symbol*> getSymbols();
-    vector<string> getCodigo();
+    string getCodigo();
     
+    void setCodigoId(int id);
+    int getCodigoId();
+    
+    void addParametro(string id, symbol* sym);
+    
+    vector<Parametro*> getParametros();
 
-    
+    string toString();
 };

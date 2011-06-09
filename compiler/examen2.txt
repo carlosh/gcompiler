@@ -16,35 +16,35 @@ nonterminal String     expr_list, expr_part,id_list,e_l,decl_function,decl_funct
 nonterminal CodigoGenerado    expr, factor, term;
    
 
-  inicio -> decl_function_l expr_list
+  inicio -> decl_function_l:lf expr_list:e
   				{
   					
   					String codigo = lf + "\n" +
   									"start:  \n\n\n\n" + e;
   									
   									
-  					RESULT = codigo; 
+  					$ = codigo; 
   				
   				
   				};
 
 
-   decl_function_l -> decl_function decl_function_l
+   decl_function_l -> decl_function:f decl_function_l:lf
    					{
    						String codigo = lf + "\n" +
    										f + "\n" ;
    										
    										
-   						RESULT = codigo;
+   						$ = codigo;
    					
    					
    					}
                    |
                    {
-                   	RESULT = "\n";
+                   	$ = "\n";
                    };
 
-   decl_function -> FUNCTION ID LPAREN id_list RPAREN BEGIN expr_list END
+   decl_function -> FUNCTION ID:id LPAREN id_list:idlist RPAREN BEGIN expr_list:e END
    					{
    						
    						String codigo = id + ":\n" +
@@ -56,12 +56,12 @@ nonterminal CodigoGenerado    expr, factor, term;
    										e + "\n";	
    									
 	
-						RESULT = codigo;
+						$ = codigo;
    					
    					};
    					
 
-   id_list -> ID COMMA id_list
+   id_list -> ID:id COMMA id_list:idlist
    				{
    					id = "@" + id;
              		InformacionGeneracion.getInstance().registerVariable(id,"dd","0");
@@ -71,11 +71,11 @@ nonterminal CodigoGenerado    expr, factor, term;
              						"mov dword[" + id + "], eax\n" +
              						"inc dword[ebp-4] ;lo incremementamos para el siguiente parametro \n";
              		
-             		RESULT = codigo;
+             		$ = codigo;
    					
    				
    				}
-             |ID
+             |ID:id
              {
              	id = "@" + id;
              	InformacionGeneracion.getInstance().registerVariable(id,"dd","0");
@@ -85,21 +85,21 @@ nonterminal CodigoGenerado    expr, factor, term;
              					"mov [" + id + "], eax\n";
              	
              	
-             	RESULT = codigo;
+             	$ = codigo;
              
              };
 
-  e_l -> expr COMMA e_l
+  e_l -> expr:e COMMA e_l:el
   		{
   			String codigo = el + e.getCodigo() + 
          					"push " + e.getLugar() + "\n" +
          					"inc ebx\n";	
          					
          					
-         	RESULT = codigo;	
+         	$ = codigo;	
   			
   		}
-         |expr
+         |expr:e
          {
          	
          	String codigo = e.getCodigo() + 
@@ -107,41 +107,41 @@ nonterminal CodigoGenerado    expr, factor, term;
          					"mov ebx, 1\n";
          	
          
-         	RESULT = codigo;
+         	$ = codigo;
          };
 
-   expr_list -> expr_list expr_part
-                 { RESULT = el+ep;}
+   expr_list -> expr_list:el expr_part:ep
+                 { $ = el+ep;}
                  |
-                 expr_part
-                 { RESULT = ep;}
+                 expr_part:ep
+                 { $ = ep;}
                  ;
    
 
 
 
-   expr_part -> expr
+   expr_part -> expr:e
                  {
                  
                  
                  	InformacionGeneracion.getInstance().registerVariable("msg","db","'%d',10,13,0");
                  	
                  	
-                    RESULT = e.getCodigo()+
+                    $ = e.getCodigo()+
                                     "push "+e.getLugar()+
                                     "\npush msg\ncall [printf]\nadd esp,8\n";
                  }
                  SEMI
-                 | ID EQUAL expr SEMI
+                 | ID:id EQUAL expr:e SEMI
                  {
                      id = "@" + id;
                      InformacionGeneracion.getInstance().registerVariable(id,"dd","0");
 
-                     RESULT = e.getCodigo() +
+                     $ = e.getCodigo() +
                               "mov eax,"+e.getLugar()+"\n"+
                               "mov ["+id+"],eax\n";
                  }
-                 | RETURN expr SEMI
+                 | RETURN expr:e SEMI
                  {
                  	String codigo = e.getCodigo() + 
                  					"mov eax, " + e.getLugar() + ";guardamos el valor de retorno \n" +
@@ -149,12 +149,12 @@ nonterminal CodigoGenerado    expr, factor, term;
 									"pop ebp\n" +
 									"ret";
 									
-					RESULT = codigo;
+					$ = codigo;
                  
                  }
                  ;
   
-   expr      -> expr PLUS factor
+   expr      -> expr:e PLUS factor:f
                    {
                       String lugar = InformacionGeneracion.getInstance().generarEtiqueta("@T");
                       InformacionGeneracion.getInstance().registerVariable(lugar,"dd","0");
@@ -163,10 +163,10 @@ nonterminal CodigoGenerado    expr, factor, term;
                                       "mov eax,"+e.getLugar()+"\n"+
                                       "add eax,"+f.getLugar()+"\n"+
                                       "mov "+lugar+",eax\n";
-                      RESULT  = new CodigoGenerado(codigo,lugar);
+                      $  = new CodigoGenerado(codigo,lugar);
                    }
                  |
-                 expr MINUS factor
+                 expr:e MINUS factor:f
                    {
                       String lugar = InformacionGeneracion.getInstance().generarEtiqueta("@T");
                       InformacionGeneracion.getInstance().registerVariable(lugar,"dd","0");
@@ -175,15 +175,15 @@ nonterminal CodigoGenerado    expr, factor, term;
                                       "mov eax,"+e.getLugar()+"\n"+
                                       "sub eax,"+f.getLugar()+"\n"+
                                       "mov "+lugar+",eax\n";
-                      RESULT  = new CodigoGenerado(codigo,lugar);
+                      $  = new CodigoGenerado(codigo,lugar);
                    }
                  |
-                 factor
-                   { RESULT=f; }
+                 factor:f
+                   { $=f; }
                  ;
    
    
-   factor    -> factor TIMES term
+   factor    -> factor:f TIMES term:t
                    {
                       String lugar = InformacionGeneracion.getInstance().generarEtiqueta("@T");
                       InformacionGeneracion.getInstance().registerVariable(lugar,"dd","0");
@@ -192,10 +192,10 @@ nonterminal CodigoGenerado    expr, factor, term;
                                       "mov eax,"+f.getLugar()+"\n"+
                                       "imul eax,"+t.getLugar()+"\n"+
                                       "mov "+lugar+",eax\n";
-                      RESULT  = new CodigoGenerado(codigo,lugar);
+                      $  = new CodigoGenerado(codigo,lugar);
                    }
                  |
-                 factor DIVIDE term
+                 factor:f DIVIDE term:t
                  {
                  	String lugar = InformacionGeneracion.getInstance().generarEtiqueta("@T");
                  	InformacionGeneracion.getInstance().registerVariable(lugar, "dd", "0");
@@ -207,22 +207,22 @@ nonterminal CodigoGenerado    expr, factor, term;
                  					"idiv ebx\n" +
                  					"mov " + lugar + ", eax \n";
                  					
-                 	RESULT = new CodigoGenerado(codigo,lugar);
+                 	$ = new CodigoGenerado(codigo,lugar);
                  }
                  |
-                 term
-                  { RESULT =t; }
+                 term:t
+                  { $ =t; }
                  ;
       
-   term      -> LPAREN expr RPAREN
-                 { RESULT = e; }
+   term      -> LPAREN expr:e RPAREN
+                 { $ = e; }
                  |
-                 NUMBER
-                 { RESULT = new CodigoGenerado("",n); }
+                 NUMBER:n
+                 { $ = new CodigoGenerado("",n); }
                  |
-                 ID
-                 { RESULT = new CodigoGenerado("","[@"+i+"]"); }
-                 | ID LPAREN e_l RPAREN
+                 ID:i
+                 { $ = new CodigoGenerado("","[@"+i+"]"); }
+                 | ID:id LPAREN e_l:el RPAREN
                  {
                  
                  	String lugar = InformacionGeneracion.getInstance().generarEtiqueta("@T");
@@ -242,7 +242,7 @@ nonterminal CodigoGenerado    expr, factor, term;
                  				"mov " + lugar + ", eax \n"; 
                  	
                  	
-                 	RESULT = new CodigoGenerado(codigo, lugar);
+                 	$ = new CodigoGenerado(codigo, lugar);
                  
                  }
                  ;
