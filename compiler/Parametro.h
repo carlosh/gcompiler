@@ -17,12 +17,13 @@ class Parametro
 {
     string id;
     string returnType;
+    int position;
     
     
 public:
-    Parametro(string _id, string _returnType);
+    Parametro(string _id, string _returnType, int pos);
     
-    
+    int getPosition();
     string getId();
     string getReturnType();
 };

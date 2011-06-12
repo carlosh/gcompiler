@@ -37,6 +37,9 @@ public:
 	LexAnalyzer(void *buffer, long buffer_size);
 	~LexAnalyzer(void);
 	Token* nextToken();
+    
+    
+    void setPascalMode(bool mode);
 	
 
 	int LineNumber();

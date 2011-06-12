@@ -1,0 +1,161 @@
+
+<% import
+import tipos.*;
+import sentencias.*;
+import expresiones.*;
+import Semantico.InformacionSemantica;
+import LALRParser.*;
+%>
+
+%class miparser
+
+<% parse_code
+%>
+
+
+
+
+
+terminal           SEMI, PLUS, MINUS, TIMES, DIVIDE, LPAREN, RPAREN,EQUAL;
+terminal           PASCAL_OPEN,PASCAL_CLOSE,TYPE,VAR,ARRAY,OF,RECORD,END,RANGO,COMMA,DOS_PUNTOS,LBRACK,RBRACK,
+                   ENTERO,CADENA,IF,THEN,ELSE,FOR,TO,DO,ASSIG,HASHTABLE,MENORQUE,MAYORQUE,PUNTO,WRITE,
+                   BOOL,AND,OR,INEQUALITY,GREATERTHANOREQUAL,LESSTHANOREQUAL;
+
+terminal NUMBER;
+terminal String ID;
+terminal String LITBOOL;
+   
+nonterminal Object     ProgramHeader,TypeDefinitions,VariableDeclarations
+                         ,TypeDefinitionList,TypeDefinition;
+nonterminal ArrayList<Limites> DimensionList;
+nonterminal Tipo Type;
+nonterminal ListaVariables  VariableDeclarationList;
+nonterminal ArrayList<String> IdentifierList;
+nonterminal  VariableDecl  VariableDeclaration;
+nonterminal Expresion Expresion,Terminal,Factor;
+nonterminal ArrayList<Expresion> ExpresionList;
+nonterminal Sentencia Program,ProgramContent,StatementList,Statement;
+
+
+Program -> ProgramHeader ProgramContent { $ = $1; };
+
+ProgramHeader -> 
+                  |PASCAL_OPEN  TypeDefinitions VariableDeclarations  PASCAL_CLOSE
+                   ;
+
+TypeDefinitions -> TYPE TypeDefinitionList
+                                      | ;
+VariableDeclarations -> VAR VariableDeclarationList { InformacionSemantica.getInstance().tablaSimbolos = $1; }
+                                                | ;
+
+
+TypeDefinitionList -> TypeDefinition  TypeDefinitionList
+                       |TypeDefinition ;
+   
+TypeDefinition ->  ID EQUAL Type SEMI { InformacionSemantica.getInstance().tablaTipos.put($0,$2); } ;
+
+Type ->       ID { $=InformacionSemantica.getInstance().tablaTipos.get($0); }
+               |ENTERO { $=InformacionSemantica.getInstance().tablaTipos.get("INTEGER"); }
+               |CADENA { $=InformacionSemantica.getInstance().tablaTipos.get("STRING"); }
+               |ARRAY LBRACK DimensionList RBRACK OF Type { $ = new Arreglo($2,$5); }
+               |RECORD  VariableDeclarationList   END { $= new Registro($1); }
+               |HASHTABLE MENORQUE Type COMMA Type MAYORQUE { $ = new HashTable($2,$4); } ;
+
+DimensionList -> NUMBER RANGO NUMBER COMMA DimensionList
+                  {
+                     ArrayList<Limites> dimension = $4;                     
+                     dimension.add(0,new Limites(Integer.valueOf($0).intValue(),Integer.valueOf($2).intValue()));
+                     $ = dimension;
+                  }
+                  |
+                  NUMBER RANGO NUMBER
+                  {
+                    ArrayList<Limites> dimension =  new ArrayList<Limites>();
+                    dimension.add(new Limites(Integer.valueOf($0).intValue(),Integer.valueOf($2).intValue()));
+                    $ = dimension;
+                  };
+
+VariableDeclarationList -> VariableDeclaration VariableDeclarationList
+                           {
+                             ListaVariables campos = $1;
+                             for(int i=0;i<$0.ids.size();i++)
+                                  campos.put($0.ids.get(i),$0.tipo);
+
+                             $ = campos;               
+
+                           }
+                          | VariableDeclaration
+                          {
+                             ListaVariables campos =new ListaVariables();
+                             for(int i=0;i<$0.ids.size();i++)
+                                  campos.put($0.ids.get(i), $0.tipo);
+                             $ = campos;
+                          };
+
+VariableDeclaration -> IdentifierList DOS_PUNTOS  Type SEMI
+                        { $=new VariableDecl($2,$0); } ;
+
+IdentifierList -> ID COMMA IdentifierList
+                   {
+                     ArrayList<String> lista = $2;
+                     lista.add(0,$0);
+                     $ = lista;
+                   }
+                 | ID
+                   {
+                     ArrayList<String> lista = new ArrayList<String>();
+                     lista.add($0);
+                     $ = lista;
+                   };
+
+
+
+ProgramContent -> StatementList { $ = $0; };
+
+StatementList -> Statement SEMI StatementList {
+                                                       $0.setSiguiente($2);
+                                                       $ = $0;
+                                                   }
+                |Statement { $ = $0;  };
+
+Statement -> ID ASSIG Expresion
+               { $ = new Asignacion(null,new Id($0),$2); }
+             |FOR ID ASSIG Expresion TO Expresion DO StatementList END
+               { $ = new For(null,new Id($1),$3,$5,$7); }
+             |IF Expresion THEN  StatementList END
+              { $ = new If(null,$1,$3,null);}
+             |IF Expresion THEN  StatementList ELSE StatementList  END
+              { $ = new If(null,$1,$3,$5); }
+             | WRITE Expresion 
+                { $ = new Write(null,$1); }
+             | { $ = null; }
+             ;
+Expresion -> Expresion PLUS Terminal { $ = new Suma($0, $2); }
+            |Expresion MINUS Terminal { $ = new Resta($0, $2); }
+            |Expresion AND Terminal { $ = new OperadorLogicoAnd($0,$2); }
+            |Expresion OR Terminal { $ = new OperadorLogicoOr($0,$2); }
+            |Expresion MAYORQUE Terminal { $ = new OperadorLogicoGT($0,$2); }
+            |Terminal { $ = $0; };
+            
+            
+Terminal -> Terminal TIMES Factor { $ = new Multiplicacion($0, $2); }
+            |Terminal DIVIDE Factor { $ = new Division($0, $2); }
+            |Factor { $ = $0; };
+
+Factor -> ID { $ = new Id($0); }
+           |NUMBER { $ = new Numero(Integer.valueOf($0).intValue()); }
+           |LPAREN Expresion RPAREN { $ = $1; }
+           |ID LBRACK ExpresionList RBRACK { $ = new ArregloExpr($2,$0); }
+           |ID PUNTO ID { $ = new Referencia($0,$2); }
+           |LITBOOL { $ = new LiteralBool($0); }
+            ;
+   
+ExpresionList -> Expresion COMMA ExpresionList
+                { ArrayList<Expresion> lista = $2;
+                    $2.add(0,$0);
+                    $ = $2;
+                   }
+               | Expresion
+               { ArrayList<Expresion> expr = new ArrayList<Expresion>();
+                  expr.add($0);
+                  $ = expr; } ;

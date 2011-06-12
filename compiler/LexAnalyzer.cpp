@@ -69,236 +69,297 @@ Token* LexAnalyzer::internalNextToken()
 	string lexema = "";
 	Token* token = NULL;
 	char c;
-
+    
 	while(currentSymbol())
 	{
-        switch(estado)
+        
+        if (pascalMode)
         {
-			case 0:
-				if (isLetter(currentSymbol())) //ID
-					estado = 1;
-				else if (isSpace(currentSymbol()) || isEnter(currentSymbol()) )
-					nextSymbol();
-				else if (currentSymbol() == '<')
-					estado = 3;
-				else if (currentSymbol() == '%') 
-					estado = 5;
-				else if (currentSymbol() == '{')
-					estado = 8;
-				else if (currentSymbol() == ',')
-					estado = 11;
-				else if (currentSymbol() == ';')
-					estado = 7;
-                else if (currentSymbol() == '-')
-					estado = 12;
-                else if (currentSymbol() == '|')
-					estado = 14;
-                else if (currentSymbol() == ':')
-                    estado = 15;
-                else
-					return NULL;
-                
-				continue;
-				break;
-			case 1: //ID 1
-				c = currentSymbol();
-				//lexema.append(1,tolower(c));
-				lexema.append(1,c);
-                token = new TokenID();
-                
-				nextSymbol();
-                
-				if (isLetter(currentSymbol()) || isDigit(currentSymbol()) || currentSymbol() == '_' || currentSymbol() == '<' || currentSymbol() == '>' ||currentSymbol() == '.')
-					estado = 2;			
-				else
-				{
-					token->appendToLexema(lexema);
-					return checkReservedWords(token);
-				}
-                
-				break;
-			case 2: //ID 2
-				if (isLetter(currentSymbol()) || isDigit(currentSymbol()) || currentSymbol() == '_' || currentSymbol() == '<' || currentSymbol() == '>' || currentSymbol() == '.')
-				{	
-					c = currentSymbol();
-					//lexema.append(1,tolower(c));
-					lexema.append(1,c);
-                    nextSymbol();
-				}
-				else
-				{
-					token->appendToLexema(lexema);
-					return checkReservedWords(token);
-				}
-				break;
-			case 3: //<%
-				c = currentSymbol();
-				lexema.append(1,c);
-				token = new TokenTagOpen();
-                
-				nextSymbol();
-                
-				if (currentSymbol() == '%' )
-				{
-					estado = 4;
-				}
-                else
-                {
-                    //error.
-                    throw new compilerexception("Error léxico. Esperando '%'");
+        
+            switch(estado)
+            {
+                case 0:
+                    if (currentSymbol() != '%' ) //ID
+                        estado = 1;
+                    else if (currentSymbol() == '%' ) //ID
+                        estado = 2;
+                    else
+                        return NULL;
                     
-                }
-                
-				break;
-			case 4: //<% 
-				c = currentSymbol();
-				lexema.append(1,c);
-                
-				nextSymbol();
-                
-				token->appendToLexema(lexema);
-				return token;
-                
-				break;
-			case 5: //%>, %
-				c = currentSymbol();
-                lexema.append(1,c);
-
-				nextSymbol();
-                
-                if (currentSymbol() == '>' )
-				{
+                    continue;
+                    break;
+                case 1: //ID 1
+                    c = currentSymbol();
+                    //lexema.append(1,tolower(c));
+                    lexema.append(1,c);
+                    token = new TokenID();
+                    
+                    nextSymbol();
+                    
+                    if (currentSymbol() == '%')
+                        estado = 2;			
+                    
+                    token->appendToLexema(lexema);
+                    return token;
+                    
+                    
+                    break;
+                case 2: //<%
                     c = currentSymbol();
                     lexema.append(1,c);
-                    token = new TokenTagClose();
                     
                     nextSymbol();
-				}
-                else
-                {
-                    token = new TokenDeclaration();
-                }
-                
-                token->appendToLexema(lexema);
-				return token;
-                
-				break;
-			case 7: //;
-				c = currentSymbol();
-				lexema.append(1,c);
-                
-                token = new TokenSemicolon();
-                
-				nextSymbol();
-                
-                token->appendToLexema(lexema);
-                return token;
-				
-				break;
-			case 11: //,
-				c = currentSymbol();
-				lexema.append(1,c);
-                
-                token = new TokenComma();
-                
-				nextSymbol();
-                
-                token->appendToLexema(lexema);
-                return token;
-				
-				break;
-			case 8: //{
-				c = currentSymbol();
-				//lexema.append(1,c);
-				
-                token = new TokenJavaCode();
-                
-				nextSymbol();
-                
-				if (currentSymbol() == '}' )
-				{
-					estado = 10;
-				}
-				else
-					estado = 9;
-                
-				break;
-			case 9: 
-				c = currentSymbol();
-				lexema.append(1,c);
-                
-				nextSymbol();
-                
-				if (currentSymbol() == '}' )
-				{
-					estado = 10;
-				}
-                
-				break;
-			case 10:
-				c = currentSymbol();
-				//lexema.append(1,c);
-				nextSymbol();
-                
-				token->appendToLexema(lexema);
-				return token;
-                
-				break;
-            case 12: //->
-				c = currentSymbol();
-				lexema.append(1,c);
-				token = new TokenProduction();
-                
-				nextSymbol();
-                
-				if (currentSymbol() == '>' )
-				{
-					estado = 13;
-				}
-                else
-                {
-                    //error.
-                    throw new compilerexception("Error léxico. Esperando '>'");
-                }
-                
-				break;
-			case 13: //->
-				c = currentSymbol();
-				lexema.append(1,c);
-                
-				nextSymbol();
-                
-				token->appendToLexema(lexema);
-				return token;
-                
-				break;
-            case 14: //|
-				c = currentSymbol();
-				lexema.append(1,c);
-                
-                token = new TokenPipe();
-                
-				nextSymbol();
-                
-                token->appendToLexema(lexema);
-                return token;
-				
-				break;
-            case 15: //:
-				c = currentSymbol();
-				lexema.append(1,c);
-                
-                token = new TokenColon();
-                
-				nextSymbol();
-                
-                token->appendToLexema(lexema);
-                return token;
-				
-				break;
-                
+                    
+                    if (currentSymbol() == '>' )
+                    {
+                        pascalMode = false;
+                        c = currentSymbol();
+                        lexema.append(1,c);
+                        token = new TokenTagClose();
+                        token->appendToLexema(lexema);
+                        nextSymbol();
+                        return token;
+                    }
+                    else
+                    {
+                        estado = 0;
+                        token = new TokenID();
+                        token->appendToLexema(lexema);
+                        return token;
+                    }
+                                       
+                    break;
+            }
+         }
+        else
+        {
+            switch(estado)
+            {
+                case 0:
+                    if (isLetter(currentSymbol())) //ID
+                        estado = 1;
+                    else if (isSpace(currentSymbol()) || isEnter(currentSymbol()) )
+                        nextSymbol();
+                    else if (currentSymbol() == '<')
+                        estado = 3;
+                    else if (currentSymbol() == '%') 
+                        estado = 5;
+                    else if (currentSymbol() == '{')
+                        estado = 8;
+                    else if (currentSymbol() == ',')
+                        estado = 11;
+                    else if (currentSymbol() == ';')
+                        estado = 7;
+                    else if (currentSymbol() == '-')
+                        estado = 12;
+                    else if (currentSymbol() == '|')
+                        estado = 14;
+                    else if (currentSymbol() == ':')
+                        estado = 15;
+                    else
+                        return NULL;
+                    
+                    continue;
+                    break;
+                case 1: //ID 1
+                    c = currentSymbol();
+                    //lexema.append(1,tolower(c));
+                    lexema.append(1,c);
+                    token = new TokenID();
+                    
+                    nextSymbol();
+                    
+                    if (isLetter(currentSymbol()) || isDigit(currentSymbol()) || currentSymbol() == '_' || currentSymbol() == '<' || currentSymbol() == '>' ||currentSymbol() == '.')
+                        estado = 2;			
+                    else
+                    {
+                        token->appendToLexema(lexema);
+                        return checkReservedWords(token);
+                    }
+                    
+                    break;
+                case 2: //ID 2
+                    if (isLetter(currentSymbol()) || isDigit(currentSymbol()) || currentSymbol() == '_' || currentSymbol() == '<' || currentSymbol() == '>' || currentSymbol() == '.')
+                    {	
+                        c = currentSymbol();
+                        //lexema.append(1,tolower(c));
+                        lexema.append(1,c);
+                        nextSymbol();
+                    }
+                    else
+                    {
+                        token->appendToLexema(lexema);
+                        return checkReservedWords(token);
+                    }
+                    break;
+                case 3: //<%
+                    c = currentSymbol();
+                    lexema.append(1,c);
+                    token = new TokenTagOpen();
+                    
+                    nextSymbol();
+                    
+                    if (currentSymbol() == '%' )
+                    {
+                        estado = 4;
+                    }
+                    else
+                    {
+                        //error.
+                        throw new compilerexception("Error léxico. Esperando '%'");
+                        
+                    }
+                    
+                    break;
+                case 4: //<% 
+                    c = currentSymbol();
+                    lexema.append(1,c);
+                    
+                    nextSymbol();
+                    
+                    
+                    token->appendToLexema(lexema);
+                    return token;
+                    
+                    break;
+                case 5: //%>, %
+                    c = currentSymbol();
+                    lexema.append(1,c);
+                    
+                    nextSymbol();
+                    
+                    if (currentSymbol() == '>' )
+                    {
+                        c = currentSymbol();
+                        lexema.append(1,c);
+                        token = new TokenTagClose();
+                        
+                        nextSymbol();
+                    }
+                    else
+                    {
+                        token = new TokenDeclaration();
+                    }
+                    
+                    token->appendToLexema(lexema);
+                    return token;
+                    
+                    break;
+                case 7: //;
+                    c = currentSymbol();
+                    lexema.append(1,c);
+                    
+                    token = new TokenSemicolon();
+                    
+                    nextSymbol();
+                    
+                    token->appendToLexema(lexema);
+                    return token;
+                    
+                    break;
+                case 11: //,
+                    c = currentSymbol();
+                    lexema.append(1,c);
+                    
+                    token = new TokenComma();
+                    
+                    nextSymbol();
+                    
+                    token->appendToLexema(lexema);
+                    return token;
+                    
+                    break;
+                case 8: //{
+                    c = currentSymbol();
+                    //lexema.append(1,c);
+                    
+                    token = new TokenJavaCode();
+                    
+                    nextSymbol();
+                    
+                    if (currentSymbol() == '}' )
+                    {
+                        estado = 10;
+                    }
+                    else
+                        estado = 9;
+                    
+                    break;
+                case 9: 
+                    c = currentSymbol();
+                    lexema.append(1,c);
+                    
+                    nextSymbol();
+                    
+                    if (currentSymbol() == '}' )
+                    {
+                        estado = 10;
+                    }
+                    
+                    break;
+                case 10:
+                    c = currentSymbol();
+                    //lexema.append(1,c);
+                    nextSymbol();
+                    
+                    token->appendToLexema(lexema);
+                    return token;
+                    
+                    break;
+                case 12: //->
+                    c = currentSymbol();
+                    lexema.append(1,c);
+                    token = new TokenProduction();
+                    
+                    nextSymbol();
+                    
+                    if (currentSymbol() == '>' )
+                    {
+                        estado = 13;
+                    }
+                    else
+                    {
+                        //error.
+                        throw new compilerexception("Error léxico. Esperando '>'");
+                    }
+                    
+                    break;
+                case 13: //->
+                    c = currentSymbol();
+                    lexema.append(1,c);
+                    
+                    nextSymbol();
+                    
+                    token->appendToLexema(lexema);
+                    return token;
+                    
+                    break;
+                case 14: //|
+                    c = currentSymbol();
+                    lexema.append(1,c);
+                    
+                    token = new TokenPipe();
+                    
+                    nextSymbol();
+                    
+                    token->appendToLexema(lexema);
+                    return token;
+                    
+                    break;
+                case 15: //:
+                    c = currentSymbol();
+                    lexema.append(1,c);
+                    
+                    token = new TokenColon();
+                    
+                    nextSymbol();
+                    
+                    token->appendToLexema(lexema);
+                    return token;
+                    
+                    break;
+            }
         }
-
 	}
 
 	//revisar si tonemos un token pendiente
@@ -316,6 +377,11 @@ Token* LexAnalyzer::internalNextToken()
 	}
 
 	return NULL;
+}
+
+void LexAnalyzer::setPascalMode(bool mode)
+{
+    pascalMode = mode;
 }
 
 Token* LexAnalyzer::checkReservedWords(Token* token)

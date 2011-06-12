@@ -25,7 +25,7 @@ using namespace std;
 #define EPSILON "_epsilon"
 #define START  "$START"
 #define EOFT  "$"
-#define CODEPREFIX "CODIGO$"
+#define CODEPREFIX "C$"
 
 
 typedef std::map<int, ItemSet*> itemset_type;
@@ -36,7 +36,6 @@ class codegenerator
     
 private:
     
-    TablaLR* tablaLR;
     std::map<int, State*> listaEstados;
     int currentItemSet;
     itemset_type itemSetList;
@@ -46,6 +45,9 @@ private:
     bool parseCode;
     bool classDeclaration;
     
+    string importString;
+    string parseString;
+    string directoryPath;
     string className;
     
     vector<nonterminal*> nonterminalList;
@@ -88,7 +90,6 @@ public:
     void cerradura(ItemSet* item);
     void printProduction(production* prod, int dotPosition);
     void processItem(ItemSet* item);
-    //vector<symbol*> getLookAhead(symbol* sym);
     vector<terminal*> primero(symbol* sym);
     
     bool checkIfItemSetExists(ItemSet* itemSet, int* estadoID);
@@ -103,22 +104,17 @@ public:
     bool productionItemEqual(ProductionItem* prodItemA, ProductionItem* prodItemB, bool ignoreDotPosition, bool ignoreLookAhead);
     bool productionItemEqualForMerge(ProductionItem* prodItemA, ProductionItem* prodItemB, bool ignoreDotPosition, bool ignoreLookAhead);
     
-    
-    //bool productionEqual(production* a, production* b);
     bool itemSetEqual(ItemSet *itemSetA, ItemSet *itemSetB);
     
     void PrintItemSets();
     
     
     
-    ItemSet* getItemSetForState(ItemSet *itemSet);
-    
     void generateJavaFile();
     void generateJavaSymFile();
     
     int getReducirLocation(production* prod);
     
-    bool itemSetEqualForState(ItemSet *itemSetA, ItemSet *itemSetB);
     
     void moveTransitions(State* estadoFrom, State* estadoTo);
     void moveTransitionsTo(State* estadoFrom, State* estadoTo);
@@ -143,7 +139,7 @@ public:
     void insertarEstados(FILE* file);
     void insertarExecuteCodeMethod(FILE* file);
     
-    
+    void setDirectoryPath(string path);
     
     
 

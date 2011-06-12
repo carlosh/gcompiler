@@ -47,6 +47,7 @@ int main (int argc, const char * argv[])
 		try
 		{
 			codegenerator* cc = new codegenerator(lex);
+            cc->setDirectoryPath(argv[2]);
 			cc->start();
             
             

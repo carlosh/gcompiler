@@ -37,7 +37,8 @@ public:
     void setCodigoId(int id);
     int getCodigoId();
     
-    void addParametro(string id, symbol* sym);
+    void addParametro(string id, symbol* sym, int position);
+    void insertListaParametros(vector<Parametro*> lista);
     
     vector<Parametro*> getParametros();
 

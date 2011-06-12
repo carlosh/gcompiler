@@ -110,6 +110,8 @@
 		C648FF7C1397318100639FAF /* cal.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = cal.txt; sourceTree = "<group>"; };
 		C648FF7E13980EB600639FAF /* calsimple.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = calsimple.txt; sourceTree = "<group>"; };
 		C65E9C381395C79700F7C32C /* gramaticapascal.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = gramaticapascal.txt; sourceTree = "<group>"; };
+		C6C5B99F13A336B3005C81E5 /* ejemplointerpretacion.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ejemplointerpretacion.txt; sourceTree = "<group>"; };
+		C6C5B9A113A49F41005C81E5 /* ejemploClaseVariables.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ejemploClaseVariables.txt; sourceTree = "<group>"; };
 		C6CB605E139F69F900FEFB15 /* examen2.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = examen2.txt; sourceTree = "<group>"; };
 		C6D42C151376E8E700A9BF48 /* State.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = State.cpp; sourceTree = "<group>"; };
 		C6D42C161376E8E700A9BF48 /* State.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = State.h; sourceTree = "<group>"; };
@@ -197,6 +199,8 @@
 		C6DA1ECF135A36BC00572D3E /* compiler */ = {
 			isa = PBXGroup;
 			children = (
+				C6C5B9A113A49F41005C81E5 /* ejemploClaseVariables.txt */,
+				C6C5B99F13A336B3005C81E5 /* ejemplointerpretacion.txt */,
 				C6CB605E139F69F900FEFB15 /* examen2.txt */,
 				C648FF7E13980EB600639FAF /* calsimple.txt */,
 				C648FF7C1397318100639FAF /* cal.txt */,

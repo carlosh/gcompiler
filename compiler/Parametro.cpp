@@ -9,10 +9,11 @@
 #include "Parametro.h"
 
 
-Parametro::Parametro(string _id, string _returnType)
+Parametro::Parametro(string _id, string _returnType, int pos)
 {
     id = _id;
     returnType = _returnType;
+    position = pos;
 }
 
 string Parametro::getId()
@@ -23,4 +24,10 @@ string Parametro::getId()
 string Parametro::getReturnType()
 {
     return returnType;
+}
+
+
+int Parametro::getPosition()
+{
+    return position;
 }

@@ -38,10 +38,9 @@ codegenerator::codegenerator(LexAnalyzer* tlex)
     classDeclaration = false;
     className = "";
     currentItemSet = 0;
-    tablaLR = new TablaLR();
     codeID = 0;
     
-    terminalList.push_back(new terminal(EPSILON));
+    terminalList.push_back(new terminal(EPSILON, "String"));
 }
 
 
@@ -99,19 +98,6 @@ void codegenerator::start()
         
 
         aumentar();
-        
-        
-        /*
-        //display production list
-        vector<production*>::iterator iterProd;
-        
-        for (iterProd = gramatica.begin(); iterProd != gramatica.end(); ++iterProd) {
-            printProduction((*iterProd), 0);
-            printf("\n");
-        }
-         */
-        
-        
         
         printGramatica();
         
@@ -177,21 +163,8 @@ void codegenerator::start()
                     prodItem->setGotoProcessed(true);
                     symbol* sym = prodItem->nextSymbol();
                     
-                    //vector<symbol*>::iterator iterSymbolos;
-                    
-                    //for (iterSymbolos = symbols.begin(); iterSymbolos != symbols.end(); iterSymbolos++) {
-                    
-                    //symbol* sym = *iterSymbolos;
-                    
-                    
-                    
-                    
-                    //just for now.
                     if ( sym != NULL && sym->getID() == EPSILON )
                     {
-                        
-                        //sym = NULL;
-                        
                         //add reduce
                         int reducePosition = getReducirLocation(prodItem->getProduction()); 
                         
@@ -206,8 +179,6 @@ void codegenerator::start()
                             Accion* accion = new Accion(REDUCE, reducePosition, prodItem->getLookAhead());
                             currentState->addAccion(accion);
                         }
-                        
-                        
                         
                         continue;
                     }
@@ -269,22 +240,6 @@ void codegenerator::start()
                                 Transition* transition = new Transition(sym, listaEstados.find(estadoFoundID)->second->getID());
                                 currentState->addTransition(transition);
                                 
-                                //hay que agregar los elementos que no son identicos, es decir que el lookahead es diferente.
-                                //State* estadoTo = listaEstados.find(estadoFoundID)->second;
-                                
-                                //estadoTo->setIsProcessed(false);
-                                
-                                //if ( estadoTo->getItemSet() != NULL )
-                                {   
-                                    //if ( estadoActual == estadoFoundID)
-                                    //moveProductionFromItemSet(newSet, (itemSetList.find(estadoFoundID)->second));
-                                    //again = true;
-                                }
-                                
-                                
-                                
-                                //delete newSet;
-                                
                                 //agregar lista de acciones e ir_a
                                 if ( typeid(*sym) == typeid(terminal) )
                                 {
@@ -319,9 +274,6 @@ void codegenerator::start()
                             currentState->addAccion(accion);
                         }
                     }
-                    //}
-                    
-                    
                     
                 }
             }    
@@ -334,15 +286,11 @@ void codegenerator::start()
         while (estadoActual < estadoSiguiente);
         
         
-        
-        printf("\n");
-        
-        
         //PrintItemSets();
         
         //printStates();
         
-        //printf("%d Item sets creados.\n", estadoActual - 1);
+        printf("Total estados creados %d\n", estadoActual - 1);
         
         
         
@@ -352,25 +300,9 @@ void codegenerator::start()
         //minimize states
         minimizar();
         
-        printf("\n\n\n\n");
-        
-        //createStates();
-        
-        printf("\n\n\n");
-        
-        
-        printStates();
-        
-        
-
-        
-        //PrintItemSets();
         //printStates();
         
-        
-        
         printf("Total estados despues de minimizar -> %d\n", (int)listaEstados.size());
-        
         
         //create file
         generateJavaFile();
@@ -490,6 +422,11 @@ void codegenerator::minimizar()
     }
 }
 
+void codegenerator::setDirectoryPath(string path)
+{
+    directoryPath = path;
+}
+
 
 void codegenerator::mergeStates(State* baseState, State* toMerge)
 {
@@ -585,12 +522,6 @@ void codegenerator::moveAcciones(State *estadoFrom, State *estadoTo)
         
         if (!estadoTo->accionExists(accion))
             estadoTo->addAccion(accion);
-        //else
-        //{
-        //    //error
-        //    string tipoAccion = (accion->getTipo() == 0?"Desplazar":(accion->getTipo() == 1?"Reducir":"Aceptar"));
-        //    throw new compilerexception("La acción de " + tipoAccion + " esta duplicada con el terminal : " + accion);
-        //}
     }
     
     estadoFrom->getListaAcciones().clear();
@@ -609,13 +540,6 @@ void codegenerator::moveIra(State *estadoFrom, State *estadoTo)
         
         if (!estadoTo->iraExists(ira))
             estadoTo->addIra(ira);
-        else
-        {
-            //error
-            //printf("ssssss\n");
-            //string tipoAccion = (accion->getTipo() == 0?"Desplazar":(accion->getTipo() == 1?"Reducir":"Aceptar"));
-            //throw new compilerexception("La acción de " + tipoAccion + " esta duplicada con el terminal : " + accion);
-        }
     }
     
     estadoFrom->getListaIra().clear();
@@ -898,14 +822,14 @@ int codegenerator::getReducirLocation(production *prod)
 
 void codegenerator::insertarProducciones(FILE *file)
 {
-    fputs("\t\t//inicio producciones\r\n", file);
+    fputs("\t\t//====inicio producciones\r\n", file);
     
     string data;
     
     
     
     
-    fputs("\t\t//inicio lista simbolos\n", file);
+    fputs("\t\t//====inicio lista simbolos\n", file);
     
     
     int numericID = 1;
@@ -943,8 +867,6 @@ void codegenerator::insertarProducciones(FILE *file)
     }    
 
     
-    fputs("\t\t//fin lista simbolos\n", file);
-    
     
     
     
@@ -964,17 +886,20 @@ void codegenerator::insertarProducciones(FILE *file)
         
         
         
-        fputs("\t\t//Produccion...\n", file);
+        fputs("\t\t//======Produccion...\n", file);
         
         data = "\t\tprod = new Production((Nonterminal)symbols.get(" + prod->getVariable()->javaString() + "));\n";
-        
         fputs(data.c_str(), file);
+        
+        data = "\t\tprod.setCodigoId(" + to_string(prod->getCodigoId()) + ");\n";
+        fputs(data.c_str(), file);
+        
         
         vector<symbol*>::iterator listaTerminales;
         
         long totalTerminales = prod->getSymbols().size();
         
-        fputs("\t\t//simbolos en la produccion\n", file);
+        fputs("\t\t//========simbolos en la produccion\n", file);
         
         
         for (int j = 0; j < totalTerminales; j++) {
@@ -1003,7 +928,7 @@ void codegenerator::insertarProducciones(FILE *file)
     }
     
     
-    fputs("\t\t//fin producciones\n\n", file);
+    fputs("\n\n", file);
 
     
 }
@@ -1011,7 +936,7 @@ void codegenerator::insertarProducciones(FILE *file)
 void codegenerator::insertarEstados(FILE *file)
 {
 
-    fputs("\t\t//inicio estados\n\n", file);
+    fputs("\t\t//====inicio estados\n\n", file);
     
     string data;
     string tonto = "";
@@ -1034,7 +959,7 @@ void codegenerator::insertarEstados(FILE *file)
         
         State* estado = iter->second; //listaEstados[i];
         //        
-        data = "\t\tstate = new State(" + tonto +(estado->isAcceptState()?"true":"false") + tonto + ", " + to_string(estado->getID()) + ");\n";
+        data = "\t\tstate = new State(" + tonto + (estado->isAcceptState()?"true":"false") + tonto + ", " + to_string(estado->getID()) + ");\n";
         fputs(data.c_str(), file);
         
         //agregar transiciones
@@ -1048,7 +973,7 @@ void codegenerator::insertarEstados(FILE *file)
             //terminal* ter = (*iterAcciones).first;
             Transition* transition = estado->getTransitions()[j];
             
-            data = "\t\ttransition = new Transition(symbols.get(String.valueOf(" + to_string(transition->getConsume()->getNumericID()) + ")), " + to_string(transition->getState()) + ");\n";
+            data = "\t\ttransition = new Transition(symbols.get(" + transition->getConsume()->javaString() + "), " + to_string(transition->getState()) + ");\n";
             fputs(data.c_str(), file);
             
             fputs("\t\tstate.getTransitions().add(transition);\n", file);
@@ -1059,7 +984,7 @@ void codegenerator::insertarEstados(FILE *file)
         //agregar acciones
         fputs("\n\n", file);
         
-        fputs("\t\t//Accion\n\n", file);
+        fputs("\t\t//======Accion\n\n", file);
        
         long totalAcciones = estado->getListaAcciones().size();
         
@@ -1084,7 +1009,7 @@ void codegenerator::insertarEstados(FILE *file)
         //agregar ir_a
         
         fputs("\n\n", file);
-        fputs("\t\t//Ir a\n\n", file);
+        fputs("\t\t//======Ir a\n\n", file);
         
         long totalIra = estado->getListaIra().size();
         
@@ -1111,7 +1036,6 @@ void codegenerator::insertarEstados(FILE *file)
         fputs(data.c_str(), file);
         
         fputs("\n\n", file);
-        fputs("\t\t//fin estado\n\n", file);
         
         
         
@@ -1120,10 +1044,14 @@ void codegenerator::insertarEstados(FILE *file)
 
 void codegenerator::insertarExecuteCodeMethod(FILE *file)
 {
-    string p = "\n\n\t@Override\n";
+    
+    string p = "\n\n\t@SuppressWarnings({ \"unchecked\", \"unused\" })//To supress some object to array casting, and unused variables\n";
     fputs(p.c_str(), file);
     
-    fputs("\tObject executeCode(ArrayList<Object> parametros, int codeId) throws Exception\n", file);
+    p = "\n\n\t@Override\n";
+    fputs(p.c_str(), file);
+    
+    fputs("\tpublic Object executeCode(ArrayList<Object> parametros, int codeId) throws Exception\n", file);
     fputs("\t{\n\n", file);
     
     fputs("\t\tswitch(codeId)\n", file);
@@ -1147,6 +1075,8 @@ void codegenerator::insertarExecuteCodeMethod(FILE *file)
             vector<Parametro*>::iterator itParam;
             vector<Parametro*> listaParam = fromLista->getParametros();
             
+            
+            long totalSimbolos = fromLista->getSymbols().size();
             //long totalParam = fromLista->getParametros().size();
             int parami = 0;
             
@@ -1158,7 +1088,7 @@ void codegenerator::insertarExecuteCodeMethod(FILE *file)
                 string symbolType = parametro->getReturnType();
                 
                 
-                p = "\t\t\t\t" + symbolType + " " + paramID + " = (" + symbolType + ")parametros.get(" + to_string(parami) +");\n";
+                p = "\t\t\t\t" + symbolType + " " + paramID + " = (" + symbolType + ")parametros.get(" + to_string((int)totalSimbolos - parametro->getPosition()-1) +");\n";
                 fputs(p.c_str(), file);
                 
                 parami++;
@@ -1194,7 +1124,7 @@ void codegenerator::insertarExecuteCodeMethod(FILE *file)
 void codegenerator::generateJavaSymFile()
 {
     
-    string symFileName = "/Users/carlosh/Documents/workspace/Parser/src/sym.java";
+    string symFileName = directoryPath + "sym.java";
     
     printf("Creando archivo %s\n", symFileName.c_str());
     
@@ -1229,7 +1159,7 @@ void codegenerator::generateJavaSymFile()
 
 void codegenerator::generateJavaFile()
 {
-    fileName = "/Users/carlosh/Documents/workspace/Parser/src/" + this->className + ".java";
+    fileName = directoryPath + this->className + ".java";
     
     printf("Creando archivo %s\n", fileName.c_str());
     
@@ -1239,7 +1169,14 @@ void codegenerator::generateJavaFile()
     fputs("\r\n\r\n", file);
     //fputs("import Parser;\r\n\r\n", file);
     
-    fputs("import java.util.ArrayList;\n\n\n", file);
+    fputs("import java.util.ArrayList;\n", file);
+    
+    fputs(importString.c_str(), file);
+    
+    fputs("\n\n", file);
+    
+    
+    
     
     string p = "public class " + this->className + " extends Parser\r\n";
     fputs(p.c_str(), file);
@@ -1270,6 +1207,12 @@ void codegenerator::generateJavaFile()
     
     insertarExecuteCodeMethod(file);
     
+    
+    p = "\t\t" + parseString;
+    fputs(p.c_str(), file);
+    
+    fputs("\n\n", file);
+    
     //final de la clase
     fputs("}\r\n", file);
     
@@ -1279,58 +1222,6 @@ void codegenerator::generateJavaFile()
     
 }
 
-
-ItemSet* codegenerator::getItemSetForState(ItemSet *itemSet)
-{
-    //long totalSets = itemSetList.size();
-    
-    map<int, ItemSet*>::iterator it;
-    
-    for (it = itemSetList.begin(); it != itemSetList.end(); ++it) {
-        //for (int i = 0; i < totalSets; i++) {
-        
-        ItemSet* itemFromList = it->second;// itemSetList[i];
-        
-        
-        if (itemSetEqualForState(itemSet, itemFromList))
-        {
-            return itemFromList;
-        }
-        
-    }
-    
-    
-    return NULL;
-        /*
-        //if (itemFromList->getProductionItems()->size() == itemSet->getProductionItems()->size())
-        {
-            long totalItems = itemFromList->getProductionItems()->size();
-            
-            bool isEqual = true;
-            //for (iterProdItem = currentSet->getProductionItems().begin(); iterProdItem != currentSet->getProductionItems().end(); ++iterProdItem) {
-            for (long j = 0; j < totalItems; j++) {
-                
-                ProductionItem* prodItemList = (*itemFromList->getProductionItems())[j];
-                ProductionItem* prodItemSet =  (*itemSet->getProductionItems())[j];
-                
-                if ( !productionItemEqual(prodItemList, prodItemSet, false, false) )
-                {
-                    isEqual = false;
-                    break;
-                }
-            }
-            
-            if (isEqual)
-            {
-                return true;
-            }
-        }
-    }
-    
-    return false;
-         
-         */
-}
 
 
 bool codegenerator::checkIfItemSetExists(ItemSet *itemSet, int* estadoID)
@@ -1371,66 +1262,6 @@ bool codegenerator::checkIfItemSetExists(ItemSet *itemSet, int* estadoID)
     return false;
 }
 
-bool codegenerator::itemSetEqualForState(ItemSet *itemSetA, ItemSet *itemSetB)
-{
-    ItemSet *menor;
-    ItemSet *mayor;
-    
-    
-    
-    //if (itemSetA->getProductionItems()->size() != itemSetB->getProductionItems()->size())
-    //    return false;
-    
-    if (itemSetA->getProductionItems()->size() >= itemSetB->getProductionItems()->size())
-    {
-        mayor = itemSetA;
-        menor = itemSetB;
-    }
-    else
-    {
-        mayor = itemSetB;
-        menor = itemSetA;
-    }
-    
-    
-    
-    
-    
-    long totalItems = menor->getProductionItems()->size();
-    
-    for (long j = 0; j < totalItems; j++) {
-        
-        ProductionItem* prodMenor = (*menor->getProductionItems())[j];
-        
-        if (prodMenor->getIsKernel())
-        {
-            
-            long totalItemsMayor = mayor->getProductionItems()->size();
-            
-            bool isEqual = false;
-            for (int i = 0; i < totalItemsMayor; i++) {
-                
-                ProductionItem* prodMayor = (*mayor->getProductionItems())[i];
-                
-                if ( productionItemEqual(prodMayor, prodMenor, true, true) )
-                {
-                    isEqual = true;
-                    break;
-                }
-            }
-            
-            if (!isEqual)
-            {
-                return false;
-            }
-        }
-    }
-    
-    if (itemSetA->getProductionItems()->size() == 0 || itemSetB->getProductionItems()->size() == 0 )
-        return false;
-    
-    return true;
-}
 
 vector<ProductionItem*> codegenerator::uniqueKernelProductionList(ItemSet* set)
 {
@@ -1477,9 +1308,6 @@ bool codegenerator::itemSetEqual(ItemSet *itemSetA, ItemSet *itemSetB)
     ItemSet *mayor;
     
     
-    
-    //if (itemSetA->getProductionItems()->size() != itemSetB->getProductionItems()->size())
-    //    return false;
     
     if (itemSetA->getProductionItems()->size() >= itemSetB->getProductionItems()->size())
     {
@@ -1726,134 +1554,6 @@ bool codegenerator::epsilonFoundIn(vector<terminal *> lista)
     return false;
 }
 
-
-/*
-vector<symbol*> codegenerator::getLookAhead(symbol* symB, symbol* symA)
-{
-    vector<symbol*> terms;
-
-    
-    if (symB == NULL)
-        terms.push_back(getTerminal("$"));
-    else
-    {
-        vector<production*>::iterator iterProd;
-        
-        for (iterProd = gramatica.begin(); iterProd != gramatica.end(); ++iterProd) {
-            if ((*iterProd)->getVariable()->getID() == symB->getID())
-            {
-                if ( isTerminal((*iterProd)->getSymbols()[0]->getID()) )
-                {
-                    terms.push_back((*iterProd)->getSymbols()[0]);
-                }
-            }
-            
-        }
-    }
-    
-    return terms;
-}
-*/
-
-
-void codegenerator::processItem(ItemSet* item)
-{
-    do {
-    
-        vector<ProductionItem*>::iterator iterProdItem;
-        vector<production*>::iterator iterProd;
-        
-        vector<production*> nuevasProducciones;
-
-        
-        for (iterProdItem = item->getProductionItems()->begin(); iterProdItem != item->getProductionItems()->end(); ++iterProdItem) {
-            ProductionItem* prodItem = ((ProductionItem*)*iterProdItem);
-            
-            if ( !prodItem->getIsProcessed() )
-            {
-                symbol* sym = prodItem->nextSymbol();
-                
-                if ( sym != NULL )
-                {        
-                    if ( isNonTerminal(sym->getID()) )
-                    {
-                        //vector<production*> temp = cerradura((nonterminal*)sym);
-                        //nuevasProducciones.insert(nuevasProducciones.end(), temp.begin(), temp.end());
-                    }
-                }
-            
-                prodItem->setIsProcessed(true);
-            }
-        }
-    
-        
-        if ( nuevasProducciones.size() > 0 )
-        {
-            for (iterProd = nuevasProducciones.begin(); iterProd != nuevasProducciones.end(); ++iterProd) {
-                
-                ProductionItem* newItem = new ProductionItem(*iterProd, this->getTerminal("$"), false); 
-                
-                
-                //symbol* sym = newItem->nextSymbol();
-                
-                //if ( isNonTerminal(sym->getID()) )
-                //{
-                //    prodItem->setLookAhead(getTerminal("$"));
-                //}
-                //else
-                //{
-                //vector<production*> nuevasProducciones;
-                //nuevasProducciones = cerradura(<#nonterminal *sym#>)
-                
-                //prodItem->setLookAhead(getTerminal(sym->getID()));
-                //}
-
-                
-                item->addProduction(newItem);
-            }
-            nuevasProducciones.clear(); 
-        }
-        else
-        {
-            /*
-            //ya no hay mas producciones en este nivel, consumamos los caracteres para el siguiente nodo.
-            
-            vector<ProductionItem*>::iterator iterProdItem;
-            vector<production*>::iterator iterProd;
-            
-            for (iterProdItem = item->getProductionItems().begin(); iterProdItem != item->getProductionItems().end(); ++iterProdItem) {
-                
-                ProductionItem* prodItem = ((ProductionItem*)*iterProdItem);
-                
-                ProductionItem* newProdItem = new ProductionItem(prodItem->getProduction(), NULL, true);
-                newProdItem->setDotPosition(prodItem->getDotPosition());
-                
-                
-                
-                if ( newProdItem->nextSymbol() != NULL )
-                {
-                    //move to next symbol
-                    newProdItem->moveDot();
-                    
-                    currentItemSet++;
-                    ItemSet* itemN = new ItemSet();
-                    itemN->addProduction(newProdItem);
-                    itemSetList[currentItemSet] = itemN;
-                    
-                    //processItem(itemN);
-                }
-                
-                
-            }
-             */
-            
-            break;
-        }
-
-    } while (true);
-    
-
-}
 
 ItemSet* codegenerator::ir_a(ItemSet* itemSet, symbol* sym)
 {
@@ -2144,57 +1844,7 @@ bool codegenerator::productionItemEqual(ProductionItem *prodItemA, ProductionIte
         return false;
 }
 
-/*
-bool codegenerator::productionEqual(production *a, production *b)
-{
-    if ( a->getSymbols().size() == b->getSymbols().size() )
-    {
-        vector<symbol*>::iterator listaTerminales;
-        
-        int i = 0;
-        for (listaTerminales = a->getSymbols().begin(); listaTerminales != a->getSymbols().end(); ++listaTerminales) {
-            symbol* simboloA = *listaTerminales;
-            
-            if ( b->getSymbols()[i] != simboloA )
-            {
-                return false;
-            }
-            
-            i++;
-        }
-        
-        return true;
-        
-    }
-    else
-        return false;
-}
- */
 
-/*
-vector<production*> codegenerator::cerradura(nonterminal* sym)
-{
-    //display production list
-    vector<production*>::iterator iterProd;
-    vector<production*> nuevasProducciones;
-    
-    for (iterProd = gramatica.begin(); iterProd != gramatica.end(); ++iterProd) {
-        if ( (*iterProd)->getVariable()->getID() == sym->getID() )
-        {
-            nuevasProducciones.push_back(*iterProd);
-        }
-    }
-    
-    return nuevasProducciones;
-}
- */
-
-/*
-void codegenerator::cerradura(nonterminal* variable)
-{
-    
-}
-*/
 
 void codegenerator::aumentar()
 {
@@ -2233,18 +1883,24 @@ void codegenerator::importTag()
     {
         if (!importCode)
         {
+            lex->setPascalMode(true);
             importCode = true;
             Token* token;
+            importString = "";
             while((token = lex->nextToken()))
             {
                 //printf("%s -> %s \r\n", token->lexema().c_str(), token->className());
                 
-                //TODO: do something later
+                
                 
                 if ( typeid(*token) == typeid(TokenTagClose) )
+                {
                     break;
+                }
                 else if ( typeid(*token) == typeid(TokenEof) )
                     throw new compilerexception("Unexpected Eof token. Expected '%>' instead.");
+                else
+                    importString += token->lexema();
                 
             }
         }
@@ -2261,18 +1917,24 @@ void codegenerator::parseCodeTag()
     {
         if (!parseCode)
         {
+            lex->setPascalMode(true);
             parseCode = true;
             Token* token;
+            parseString = "";
             while((token = lex->nextToken()))
             {
-                //printf("%s -> %s \r\n", token->lexema().c_str(), token->className());
+                printf("%s \r\n", token->lexema().c_str());
                 
-                //TODO: do something later
+                
                 
                 if ( typeid(*token) == typeid(TokenTagClose) )
+                {
                     break;
+                }
                 else if ( typeid(*token) == typeid(TokenEof) )
                     throw new compilerexception("Unexpected Eof token. Expected '%>' instead.");
+                else
+                    parseString += token->lexema(); 
                 
             }
         }
@@ -2314,21 +1976,55 @@ void codegenerator::tagTerminal()
 {
     if ( typeid(*lex->currentToken()) == typeid(TokenTerminal) )
     {
+        bool onlySymbols = false;
+        string returnId = "String";
         Token* token;
+        string id;
+        bool dontConsume = false;
         while((token = lex->nextToken()))
         {
             //printf("%s -> %s \r\n", token->lexema().c_str(), token->className());
             if ( typeid(*token) == typeid(TokenID) )
             {
-                string id = lex->currentToken()->lexema();
-                               
+                
+                if (!onlySymbols)
+                {
+                    returnId = token->lexema();
+                    
+                    token = lex->nextToken();
+                    
+                    if ( typeid(*token) != typeid(TokenID) && typeid(*token) != typeid(TokenComma) && typeid(*token) != typeid(TokenSemicolon)  )
+                    {
+                        throw new compilerexception("Symbol expected!"); 
+                    }
+                    else if ((typeid(*token) == typeid(TokenComma)) || (typeid(*token) == typeid(TokenSemicolon)))
+                    {
+                        //en este caso no se definio tipo
+                        //el que pensamos que era un tipo, es realmente un simbolo
+                        id = returnId;
+                        dontConsume = true;
+            
+                        returnId = "String";
+                        lex->rewindToLastToken();
+                    }
+                    
+                    onlySymbols = true;
+                }
+                
+                if (!dontConsume)
+                    id = lex->currentToken()->lexema();
+                else
+                    dontConsume = false;
+                
+                
+                
                 if (isSymbolDeclared(id))
                 {
                     throw new compilerexception("Symbol ID (" + id + ") already declared!");
                 }
                 
                 //simbolo
-                terminal* terminalSymbol = new terminal(id, "String");
+                terminal* terminalSymbol = new terminal(id, returnId);
                 terminalList.push_back(terminalSymbol);
 
                 
@@ -2562,6 +2258,9 @@ void codegenerator::parseSymbols(nonterminal* nonTerminalSymbol)
         
         string code = "";
         
+        int symbolPosition = 0;
+
+        
         if (typeid(*lex->currentToken()) == typeid(TokenJavaCode))
         {
             code = lex->currentToken()->lexema();
@@ -2578,6 +2277,7 @@ void codegenerator::parseSymbols(nonterminal* nonTerminalSymbol)
                 
                 string nextCodePrefix = CODEPREFIX + to_string(codeID);
                 nonterminal* nt = new nonterminal(nextCodePrefix, "String");
+                nonterminalList.push_back(nt);
                 production* prodForCode = new production(nt);
                 prodForCode->addSymbol(getSymbol(EPSILON));
                 prodForCode->setCodigo(code);
@@ -2588,13 +2288,14 @@ void codegenerator::parseSymbols(nonterminal* nonTerminalSymbol)
                 gramatica.push_back(prodForCode);
                 
                 prod->addSymbol(nt);
+
+                symbolPosition++;
                  
             }
         }
         //else
         //    prod->addCode(" ");
 
-        
         while (true)
         {
             
@@ -2615,6 +2316,8 @@ void codegenerator::parseSymbols(nonterminal* nonTerminalSymbol)
                 symbol* symbolObj = getSymbol(lex->currentToken()->lexema());
                 string param = "";
                 
+                
+                
                 if (symbolObj == NULL)
                 {
                    throw new compilerexception("Undefined symbol (" + lex->currentToken()->lexema() + ")!");  
@@ -2624,6 +2327,8 @@ void codegenerator::parseSymbols(nonterminal* nonTerminalSymbol)
                 
                 if (typeid(*lex->currentToken()) == typeid(TokenColon))
                 {
+                   
+                    
                     //viene un parametro
                     lex->nextToken();
                     
@@ -2631,7 +2336,10 @@ void codegenerator::parseSymbols(nonterminal* nonTerminalSymbol)
                     if (typeid(*lex->currentToken()) == typeid(TokenID))
                     {
                         param = lex->currentToken()->lexema();
-                        prod->addParametro(param, symbolObj);
+                        
+                        throw new compilerexception("El profe dijo que mejor solo por posicion no por nombre :P (" + param + ")!");
+                    
+                        prod->addParametro(param, symbolObj, symbolPosition);
                         
                         lex->nextToken();
                     }
@@ -2639,6 +2347,9 @@ void codegenerator::parseSymbols(nonterminal* nonTerminalSymbol)
                         throw new compilerexception("Parameter id expected on symbol (" + symbolObj->getID() + "), received (" + lex->currentToken()->lexema() + ") instead!");  
                     
                 }
+                
+                //ahora todos tienen un parametro.
+                prod->addParametro("$" + to_string(symbolPosition), symbolObj, symbolPosition);
                 
                 code = "";
                 
@@ -2660,13 +2371,16 @@ void codegenerator::parseSymbols(nonterminal* nonTerminalSymbol)
                         
                         string nextCodePrefix = CODEPREFIX + to_string(codeID);
                         nonterminal* nt = new nonterminal(nextCodePrefix, prod->getVariable()->getReturnObjectID());
+                        nonterminalList.push_back(nt);
                         production* prodForCode = new production(nt);
                         prodForCode->addSymbol(getSymbol(EPSILON));
                         prodForCode->setCodigo(code);
                         prodForCode->setCodigoId(codeID);
                         
-                        if ( param != "" )
-                            prodForCode->addParametro(param, symbolObj);
+                        prodForCode->insertListaParametros(prod->getParametros());
+                        
+                        symbolPosition++;
+                        prod->addParametro("$" + to_string(symbolPosition), prod->getVariable(), symbolPosition);
                         
                         codeID++;
                         
@@ -2686,6 +2400,7 @@ void codegenerator::parseSymbols(nonterminal* nonTerminalSymbol)
                 
                 
                 
+                symbolPosition++;
                 
             }
             

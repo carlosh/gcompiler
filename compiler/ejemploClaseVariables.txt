@@ -1,0 +1,15 @@
+<% import
+import LALRParser.*;
+%>
+%class prueba
+
+<% parse_code
+%>
+
+
+
+terminal NUM, MAS;
+
+nonterminal INT E, T;
+
+

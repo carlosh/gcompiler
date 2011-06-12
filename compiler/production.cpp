@@ -53,12 +53,12 @@ int production::getCodigoId()
 }
 
 
-void production::addParametro(string id, symbol *sym)
+void production::addParametro(string id, symbol *sym, int position)
 {
     
     
     
-    Parametro* newParametro = new Parametro(id, sym->getReturnObjectID());
+    Parametro* newParametro = new Parametro(id, sym->getReturnObjectID(), position);
     
     parametros.push_back(newParametro);
 }
@@ -66,6 +66,11 @@ void production::addParametro(string id, symbol *sym)
 vector<Parametro*> production::getParametros()
 {
     return parametros;
+}
+
+void production::insertListaParametros(vector<Parametro *> lista)
+{
+    parametros.insert(parametros.end(), lista.begin(), lista.end());
 }
 
 string production::toString()
