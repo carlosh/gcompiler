@@ -290,7 +290,7 @@ void codegenerator::start()
         
         //printStates();
         
-        printf("Total estados creados %d\n", estadoActual - 1);
+        printf("Total estados creados %d\n", (int)listaEstados.size());
         
         
         
@@ -1923,7 +1923,7 @@ void codegenerator::parseCodeTag()
             parseString = "";
             while((token = lex->nextToken()))
             {
-                printf("%s \r\n", token->lexema().c_str());
+                //printf("%s \r\n", token->lexema().c_str());
                 
                 
                 

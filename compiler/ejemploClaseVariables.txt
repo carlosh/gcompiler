@@ -1,15 +1,27 @@
 <% import
 import LALRParser.*;
 %>
-%class prueba
+%class miparser
 
 <% parse_code
 %>
 
 
 
-terminal NUM, MAS;
+terminal NUMERO, ID, ASSIG, MAS, MINUS, TIMES;
 
-nonterminal INT E, T;
+nonterminal Expression E, Terminal, Factor, Expr;
 
 
+E -> ID ASSIG Expr { $ = $2; };
+
+Expr -> Expr MAS Terminal { $ = new Suma($0, $2); }
+        |Expr MINUS Terminal { $ = new Resta($0, $2);}
+        |Terminal { $ = $0;};
+
+Terminal -> Terminal TIMES Factor { $ = new Multiplicacion($0, $2); }
+            |Factor { $ = $0; };
+
+Factor -> ID { $ = new Id($0); }
+        |NUMERO { $ = new Numero(Integer.valueOf($0).intValue()); };
+        
