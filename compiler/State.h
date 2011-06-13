@@ -43,6 +43,8 @@ public:
     void setIsAccept(bool isAcceptState);
     
     bool isAcceptState();
+    
+    
     void addTransition(Transition* transition);
     vector<Transition*> getTransitions();
     int getID();

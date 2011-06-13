@@ -199,9 +199,6 @@ void codegenerator::start()
                                 itemSetList[estadoSiguiente] = newSet;
                                 bool isAccept = false;
                                 
-                                if (estadoSiguiente == 1)
-                                    isAccept = true;
-                                
                                 State* estadoNuevo = new State(isAccept, estadoSiguiente);
                                 
                                 Transition* transition = new Transition(sym, estadoNuevo->getID());
@@ -266,7 +263,10 @@ void codegenerator::start()
                         { 
                             Accion* accion = new Accion(ACCEPT, reducePosition, prodItem->getLookAhead());
                             if (!currentState->accionExists(accion))
-                                currentState->addAccion(accion);    
+                            {
+                                currentState->addAccion(accion);
+                                currentState->setIsAccept(true);
+                            }    
                         }
                         else if (reducePosition > 0)
                         {
