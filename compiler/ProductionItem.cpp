@@ -17,6 +17,7 @@ ProductionItem::ProductionItem(production* _prod, terminal* la, bool _isKernel)
     isProcessed = false;
     gotoProcessed = false;
     passId = 1;
+    lookAheadString = "";
     
 }
 
@@ -76,6 +77,19 @@ void ProductionItem::moveDot()
 {
     if ( dotPosition + 1 <= prod->getSymbols().size() )
         dotPosition++;
+}
+
+void ProductionItem::appendLookAheadString(string l)
+{
+    if (lookAheadString != "")
+        lookAheadString += ", ";
+    
+    lookAheadString += l;
+}
+
+string ProductionItem::getLookAheadString()
+{
+    return lookAheadString;
 }
 
 

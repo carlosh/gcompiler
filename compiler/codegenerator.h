@@ -108,7 +108,7 @@ public:
     
     void PrintItemSets();
     
-    
+    vector<ProductionItem*> getReducedItemSet(vector<ProductionItem*>* bigList);
     
     void generateJavaFile();
     void generateJavaSymFile();

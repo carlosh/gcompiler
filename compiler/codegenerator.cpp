@@ -820,6 +820,7 @@ int codegenerator::getReducirLocation(production *prod)
 
 
 
+
 void codegenerator::insertarProducciones(FILE *file)
 {
     fputs("\t\t//====inicio producciones\r\n", file);
@@ -936,14 +937,23 @@ void codegenerator::insertarProducciones(FILE *file)
 void codegenerator::insertarEstados(FILE *file)
 {
 
+    
+    
+    
+    
+    fputs("\tvoid initEstados() {\n", file);
+    
+    
     fputs("\t\t//====inicio estados\n\n", file);
     
     string data;
     string tonto = "";
     
+    fputs("\t\t//Variable names are short to circumvent java's 65535 limit on method size.\n", file);
     fputs("\t\tState state = null;\n", file);
-    fputs("\t\tTransition transition = null;\n", file);
-    fputs("\t\tAccion accion = null;\n", file);
+    fputs("\t\tTransition t = null;\n", file);
+    fputs("\t\tProductionItem p = null;\n", file);
+    fputs("\t\tAccion a = null;\n", file);
     fputs("\t\tIra ira = null;\n", file);
     
     
@@ -973,11 +983,35 @@ void codegenerator::insertarEstados(FILE *file)
             //terminal* ter = (*iterAcciones).first;
             Transition* transition = estado->getTransitions()[j];
             
-            data = "\t\ttransition = new Transition(symbols.get(" + transition->getConsume()->javaString() + "), " + to_string(transition->getState()) + ");\n";
+            data = "\t\tt = new Transition(symbols.get(" + transition->getConsume()->javaString() + "), " + to_string(transition->getState()) + ");\n";
             fputs(data.c_str(), file);
             
-            fputs("\t\tstate.getTransitions().add(transition);\n", file);
+            fputs("\t\tstate.getTransitions().add(t);\n", file);
         }
+      
+        
+        //agregar itemsets
+        
+        fputs("\n\n", file);
+        
+        fputs("\t\t//======Item sets\n\n", file);
+        
+        vector<ProductionItem*> listaReducida = getReducedItemSet(estado->getItemSet()->getProductionItems());
+        
+        long totalItems = listaReducida.size();
+        
+        //for (iterProdItem = currentSet->getProductionItems().begin(); iterProdItem != currentSet->getProductionItems().end(); ++iterProdItem) {
+        for (long i = 0; i < totalItems; i++) {
+            
+            ProductionItem* prodItem = listaReducida[i];
+            
+            data = "\t\tp = new ProductionItem(gramatica.getP().get(" + to_string(getReducirLocation(prodItem->getProduction())) + "),\"" + prodItem->getLookAheadString() + "\"," + to_string(prodItem->getDotPosition()) + ");\n";
+            fputs(data.c_str(), file);
+            
+            fputs("\t\tstate.getPL().add(p);\n", file);
+        }
+        
+        
         
         
         
@@ -996,10 +1030,10 @@ void codegenerator::insertarEstados(FILE *file)
             //terminal* ter = (*iterAcciones).first;
             Accion* accion = estado->getListaAcciones()[j];
             
-            data = "\t\taccion = new Accion(" + tonto + (accion->getTipo() == SHIFT?"Accion.tipo_accion.SHIFT":(accion->getTipo() == REDUCE?"Accion.tipo_accion.REDUCE":"Accion.tipo_accion.ACCEPT")) + tonto + ", " + to_string(accion->getEstadoID()) + ");\n";
+            data = "\t\ta = new Accion(" + tonto + (accion->getTipo() == SHIFT?"Accion.tipo_accion.SHIFT":(accion->getTipo() == REDUCE?"Accion.tipo_accion.REDUCE":"Accion.tipo_accion.ACCEPT")) + tonto + ", " + to_string(accion->getEstadoID()) + ");\n";
             fputs(data.c_str(), file);
             
-            data = "\t\tstate.getListaAcciones().put((Terminal)symbols.get(" + accion->getTerminal()->javaString() + "), accion);\n";
+            data = "\t\tstate.getListaAcciones().put((Terminal)symbols.get(" + accion->getTerminal()->javaString() + "), a);\n";
             fputs(data.c_str(), file);
             
         }
@@ -1028,19 +1062,20 @@ void codegenerator::insertarEstados(FILE *file)
             fputs(data.c_str(), file); 
         }
         
-        fputs("\n\n", file);
-        fputs("\t\t//fin ira a\n\n", file);
-        
-        
+                
         data = "\t\tstates.put(\"" + to_string(estado->getID()) + "\", state);\n";
         fputs(data.c_str(), file);
         
         fputs("\n\n", file);
         
-        
-        
     }
+    
+    
+    fputs("\t}\n", file);
+
 }
+
+
 
 void codegenerator::insertarExecuteCodeMethod(FILE *file)
 {
@@ -1199,11 +1234,18 @@ void codegenerator::generateJavaFile()
     
     insertarProducciones(file);
     
-    insertarEstados(file);
+    
+    fputs("\t\tinitEstados();\n", file);
+    
     
     //final del constructor
     fputs("\t}\r\n", file);
     
+    fputs("\t\r\n", file);
+    
+    fputs("\t\r\n", file);
+    
+    insertarEstados(file);
     
     insertarExecuteCodeMethod(file);
     
@@ -1361,6 +1403,42 @@ bool codegenerator::itemSetEqual(ItemSet *itemSetA, ItemSet *itemSetB)
         return false;
     
     return true;
+}
+
+
+vector<ProductionItem*> codegenerator::getReducedItemSet(vector<ProductionItem*>* bigList)
+{
+    
+    vector<ProductionItem*> reducedList;
+    
+    long totalItems = bigList->size();
+    
+    for (long i = 0; i < totalItems; i++) {
+        
+        ProductionItem* prodItem = (*bigList)[i];
+        
+        long totalReducedItems = reducedList.size();
+        
+        bool found = false;
+        for (long j = 0; j < totalReducedItems; j++) {
+            ProductionItem* prodItem2 = reducedList[j];
+            
+            if (productionItemEqual(prodItem, prodItem2, false, true))
+            {
+                prodItem2->appendLookAheadString(prodItem->getLookAhead()->getID());
+                found = true;
+                break;
+            }
+        }
+        
+        if (!found)
+        {
+            prodItem->appendLookAheadString(prodItem->getLookAhead()->getID());
+            reducedList.push_back(prodItem);
+        }
+    }
+    
+    return reducedList;
 }
 
 
@@ -1851,6 +1929,7 @@ void codegenerator::aumentar()
     if (gramatica.size() > 0) {
         nonterminal* t = new nonterminal(START, gramatica[0]->getVariable()->getReturnObjectID());
         t->setNumericID(0);
+        nonterminalList.push_back(t);
         production* inicio = new production(t);
         //inicio->addCode("");
         //inicio->addCode("");

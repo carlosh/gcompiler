@@ -21,6 +21,7 @@ class ProductionItem
     bool gotoProcessed;
     int passId;
     int originalState;
+    string lookAheadString;
     
 public:
     ProductionItem(production* _prod, terminal* _la, bool isKernel);
@@ -42,5 +43,6 @@ public:
     void setPassId(int p);
     void setOriginalState(int os);
     int getOriginalState();
-    
+    void appendLookAheadString(string l);
+    string getLookAheadString();
 };

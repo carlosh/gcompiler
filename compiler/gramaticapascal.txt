@@ -1,6 +1,13 @@
 <% import
+import tipos.*;
+import sentencias.*;
+import expresiones.*;
+import Semantico.InformacionSemantica;
+import LALRParser.*;
 %>
-%class prueba
+
+
+%class miparser
 
 <% parse_code
 %>
