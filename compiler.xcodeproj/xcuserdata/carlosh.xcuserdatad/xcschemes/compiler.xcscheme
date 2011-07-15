@@ -48,7 +48,11 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "/Users/carlosh/Projects/compiler/compiler/testcode.txt"
+            argument = "/Users/carlosh/Projects/compiler/compiler/ejemplointerpretacion.txt"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "/Users/carlosh/Documents/workspace/ejemploMiParser/src/"
             isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
